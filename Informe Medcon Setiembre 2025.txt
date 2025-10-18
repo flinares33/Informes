@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informe Ejecutivo Oracle — Septiembre 2025</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --verde: #2ecc71;
+      --amarillo: #f1c40f;
+      --naranja: #e67e22;
+      --rojo: #e74c3c;
+      --gris: #ecf0f1;
+      --azul: #3498db;
+      --texto: #2c3e50;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: var(--texto);
+    }
+    header {
+      background-color: var(--azul);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    section {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      border-bottom: 2px solid var(--gris);
+      padding-bottom: 5px;
+      margin-top: 40px;
+    }
+    .estado {
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+    }
+    .verde { background-color: var(--verde); }
+    .amarillo { background-color: var(--amarillo); }
+    .naranja { background-color: var(--naranja); }
+    .rojo { background-color: var(--rojo); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: var(--gris);
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: var(--gris);
+      border-radius: 4px;
+      margin-right: 5px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📘 Informe Ejecutivo Oracle — Septiembre 2025</h1>
+  <p>Medcom | Área de Tecnología | Oficial de Servicios de TI</p>
+</header>
+
+<section>
+  <h2>🧾 1. Resumen Ejecutivo</h2>
+  <p>
+    Durante septiembre, el entorno Oracle se mantuvo operativo con una tasa de resolución de tickets del <strong>94.44%</strong>. 
+    Se identificaron riesgos en el uso de <span class="tag">tablespaces</span> (FACTU al 95.63%), 
+    <span class="tag">filesystems</span> con uso crítico (91%), y <span class="tag">diskgroups RECO</span> con bajo espacio libre (&lt;20%). 
+    Los <span class="tag">respaldos</span> se completaron exitosamente, aunque se recomienda validar restores. 
+    <span class="tag">Data Guard</span> operó sin lag ni gaps. Se atendieron alertas por uso elevado de memoria y disco.
+  </p>
+
+  <h2>📌 2. Hallazgos Principales</h2>
+
+  <h3>🔹 Métricas de Servidores</h3>
+  <ul>
+    <li><strong>prod2dr</strong>: uso de memoria &gt;90% (ticket 24051).</li>
+    <li><strong>OWLPROD</strong>: alerta de memoria (falso positivo, ticket 24308).</li>
+    <li><strong>OWLDESA</strong>: disco raíz al 82%.</li>
+  </ul>
+
+  <h3>🔹 ASM Diskgroups</h3>
+  <ul>
+    <li><strong>RECO en PROD1 y PROD1DR</strong>: solo ~17% libre.</li>
+    <li><strong>DATA en DESA2</strong>: 33.24% libre.</li>
+    <li><strong>RECO en DESA1 y DESA2</strong>: &gt;98% libre.</li>
+  </ul>
+
+  <h3>🔹 Filesystems</h3>
+  <ul>
+    <li><strong>PROD1</strong>: montajes NFS al 91%.</li>
+    <li><strong>OWLPROD, OWLDESA, PROD2</strong>: raíz entre 71% y 82%.</li>
+    <li><strong>PROD2DR</strong>: /Backup_rman al 85%.</li>
+    <li><strong>DESA1</strong>: /u01 al 70%.</li>
+  </ul>
+
+  <h3>🔹 Tablespaces</h3>
+  <ul>
+    <li><strong>FACTU en MEDCPROD</strong>: 95.63%.</li>
+    <li><strong>SYSAUX en MEDADMDESA</strong> y <strong>FACTU en MEDCDESA</strong>: &gt;76%.</li>
+    <li><strong>USERS en MEDCDESA</strong>: 50.03%.</li>
+    <li>Segmentos LOB &gt;100GB y tablas de auditoría grandes.</li>
+  </ul>
+
+  <h3>🔹 Data Guard</h3>
+  <ul>
+    <li>Modo <strong>MaxPerformance</strong>.</li>
+    <li><strong>Transport Lag</strong> y <strong>Apply Lag</strong>: 0 segundos.</li>
+    <li>Estado: <strong>SUCCESS</strong>.</li>
+  </ul>
+
+  <h3>🔹 Respaldos</h3>
+  <ul>
+    <li>Respaldos diarios: <strong>ARCHIVELOG</strong>, <strong>DB INCR</strong>, <strong>SPFILE</strong>.</li>
+    <li>Todos completados.</li>
+    <li>Sin evidencia de restores recientes.</li>
+  </ul>
+
+  <h3>🔹 Incidentes y Eventos</h3>
+  <ul>
+    <li>VNC congelado (ticket 23897).</li>
+    <li>Timeout en BD (ticket 24340).</li>
+    <li>Errores LDAP (ticket 24409).</li>
+    <li>Certificados inválidos (ticket 24245).</li>
+  </ul>
+
+  <h2>🚦 3. Semáforo Ejecutivo</h2>
+  <table>
+    <tr>
+      <th>Área</th>
+      <th>Estado</th>
+      <th>Comentario Ejecutivo</th>
+    </tr>
+    <tr>
+      <td>Métricas de servidores</td>
+      <td><span class="estado amarillo">🟡</span></td>
+      <td>Alertas de memoria y disco en prod2dr, OWLPROD, OWLDESA.</td>
+    </tr>
+    <tr>
+      <td>ASM Diskgroup</td>
+      <td><span class="estado amarillo">🟡</span></td>
+      <td>RECO en PROD1 y PROD1DR con espacio libre &lt;20%.</td>
+    </tr>
+    <tr>
+      <td>Filesystems</td>
+      <td><span class="estado rojo">🔴</span></td>
+      <td>Uso crítico en montajes NFS y particiones raíz.</td>
+    </tr>
+    <tr>
+      <td>Tablespaces</td>
+      <td><span class="estado naranja">🟠</span></td>
+      <td>FACTU al 95.63%. Otros &gt;75%.</td>
+    </tr>
+    <tr>
+      <td>Data Guard</td>
+      <td><span class="estado verde">🟢</span></td>
+      <td>Sin lag ni gaps. Estado SUCCESS.</td>
+    </tr>
+    <tr>
+      <td>Respaldos</td>
+      <td><span class="estado amarillo">🟡</span></td>
+      <td>Completados, sin validación de restores.</td>
+    </tr>
+  </table>
+
+  <h2>🛠️ 4. Recomendaciones</h2>
+  <ul>
+    <li>Validar restores de respaldos recientes.</li>
+    <li>Revisar compresión en respaldos DB INCR.</li>
+    <li>Implementar monitoreo de éxito/fallo de restores.</li>
+    <li>Housekeeping en filesystems críticos.</li>
+    <li>Ampliar espacio en RECO y DATA.</li>
+    <li>Auditar estrategia de respaldo SPFILE.</li>
+    <li>Optimizar tablas y segmentos LOB grandes.</li>
+  </ul>
+
+  <h2>🎫 5. Tickets Abiertos (al 30-SEP-2025)</h2>
+  <p><em>No se presenta lista de tickets abiertos en el documento. Se recomienda solicitarla al área correspondiente.</em></p>
+
+  <h3>🎯 Tickets sugeridos derivados de hallazgos:</h3>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Fecha</th>
+      <th>Clasificación</th>
+      <th>Descripción</th>
+      <th>Prioridad</th>
+      <th>Estado</th>
+    </tr>
+    <tr>
+      <td>TBD-001</td>
+      <td>30-SEP-25</td>
+      <td>Planificable</td>
+      <td>Validación de restores de respaldos DB INCR y ARCHIVELOG</td>
+      <td>Alta</td>
+      <td>Propuesta</td>
+    </tr>
+    <tr>
+      <td>TBD-002</td>
+      <td>30-SEP-25</td>
+      <td>Planificable</td>
+      <td>Revisión de configuración de compresión en RMAN</td>
+      <td>Media</td>
+      <td>Propuesta</td>
+    </tr>
+    <tr>
+      <td>TBD-003</td>
+      <td>30-SEP-25</td>
+      <td>Planificable</td>
+      <td>Auditoría de estrategia de respaldo y frecuencia de SPFILE</td>
+      <td>Media</td>
+      <td>Propuesta</td>
+    </tr>
+  </table>
+
+</section>
+</body>
+</html>

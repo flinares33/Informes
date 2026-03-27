@@ -2,89 +2,68 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Célula Epsilon — 2026-03-27</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Epsilon &mdash; 2026-03-27</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
-  .header { background: #3A1A6B; color: #fff; padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; }
-  .header h1 { font-size: 24px; font-weight: 700; }
-  .header .subtitle { font-size: 13px; opacity: 0.85; margin-top: 4px; }
-  .nav { background: #fff; padding: 10px 30px; border-bottom: 1px solid #ddd; display: flex; gap: 10px; flex-wrap: wrap; }
-  .nav a { text-decoration: none; color: #3A1A6B; font-size: 13px; font-weight: 600; padding: 4px 12px; border: 1px solid #3A1A6B; border-radius: 20px; }
-  .nav a:hover { background: #3A1A6B; color: #fff; }
-  .container { padding: 24px 30px; max-width: 1400px; margin: 0 auto; }
-  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-top: 4px solid #3A1A6B; }
-  .kpi .value { font-size: 36px; font-weight: 800; color: #3A1A6B; }
-  .kpi .label { font-size: 12px; color: #777; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .kpi.warn .value { color: #E74C3C; }
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-  .card h3 { font-size: 14px; font-weight: 700; color: #444; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .chart-container { position: relative; height: 260px; }
-  .search-bar { width: 100%; padding: 10px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 12px; outline: none; }
-  .search-bar:focus { border-color: #3A1A6B; box-shadow: 0 0 0 3px #3A1A6B22; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #3A1A6B; color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; }
-  td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
-  tr:hover td { background: #f7f9ff; }
-  .footer { text-align: center; padding: 20px; color: #aaa; font-size: 12px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333}
+.header{background:#3A1A6B;color:#fff;padding:20px 30px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:24px;font-weight:700}
+.header .sub{font-size:13px;opacity:.85;margin-top:4px}
+.nav{background:#fff;padding:10px 30px;border-bottom:1px solid #ddd;display:flex;gap:10px;flex-wrap:wrap}
+.nav a{text-decoration:none;color:#3A1A6B;font-size:13px;font-weight:600;padding:4px 12px;border:1px solid #3A1A6B;border-radius:20px}
+.nav a:hover{background:#3A1A6B;color:#fff}
+.container{padding:24px 30px;max-width:1400px;margin:0 auto}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:4px solid #3A1A6B}
+.kpi .value{font-size:36px;font-weight:800;color:#3A1A6B}
+.kpi .label{font-size:12px;color:#777;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.card h3{font-size:14px;font-weight:700;color:#444;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px}
+.chart-container{position:relative;height:260px}
+.search-bar{width:100%;padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none}
+.search-bar:focus{border-color:#3A1A6B;box-shadow:0 0 0 3px #3A1A6B22}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#3A1A6B;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+td{padding:9px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:hover td{background:#f7f9ff}
+.footer{text-align:center;padding:20px;color:#aaa;font-size:12px}
 </style>
 </head>
 <body>
 <div class="header">
-  <div>
-    <h1>📊 Dashboard — Célula Epsilon</h1>
-    <div class="subtitle">Reporte semanal · Generado: 2026-03-27 · Solusoft</div>
-  </div>
-  <div style="font-size:13px;opacity:0.85;">Departamento: Soluciones y Servicios Tecnológicos</div>
+  <div><h1>&#128202; Dashboard &mdash; C&eacute;lula Epsilon</h1>
+  <div class="sub">Reporte semanal &middot; Generado: 2026-03-27 &middot; Solusoft</div></div>
+  <div style="font-size:13px;opacity:.85">Dpto: Soluciones y Servicios Tecnol&oacute;gicos</div>
 </div>
 <div class="nav">
-  <a href="../Dashboard_Estrategico.html">🏠 Estratégico</a>
-  <a href="Dashboard_Alpha.html"> Alpha</a><a href="Dashboard_Beta.html"> Beta</a><a href="Dashboard_Delta.html"> Delta</a><a href="Dashboard_Epsilon.html">[A] Epsilon</a><a href="Dashboard_Gamma.html"> Gamma</a>
+  <a href="../Dashboard_Estrategico.html">&#127968; Estrat&eacute;gico</a>
+  <a href="Dashboard_Alpha.html" >Alpha</a><a href="Dashboard_Beta.html" >Beta</a><a href="Dashboard_Delta.html" >Delta</a><a href="Dashboard_Epsilon.html" style="font-weight:900;">Epsilon</a><a href="Dashboard_Gamma.html" >Gamma</a>
 </div>
 <div class="container">
   <div class="kpi-row">
     <div class="kpi"><div class="value">2</div><div class="label">Total Tickets</div></div>
-    <div class="kpi"><div class="value" style="color:#2E86DE;">0</div><div class="label">Abiertos</div></div>
-    <div class="kpi"><div class="value" style="color:#F5A623;">2</div><div class="label">Esp. Cliente</div></div>
-    <div class="kpi "><div class="value" style="color:#E74C3C;">0</div><div class="label">Escalados</div></div>
-    <div class="kpi "><div class="value" style="color:#E74C3C;">0</div><div class="label">Vencidos</div></div>
+    <div class="kpi"><div class="value" style="color:#2E86DE">0</div><div class="label">Abiertos</div></div>
+    <div class="kpi"><div class="value" style="color:#F5A623">2</div><div class="label">Esp. Cliente</div></div>
+    <div class="kpi"><div class="value" style="color:#E74C3C">0</div><div class="label">Escalados</div></div>
+    <div class="kpi"><div class="value" style="color:#E74C3C">0</div><div class="label">Vencidos</div></div>
   </div>
-
   <div class="charts-row">
-    <div class="card">
-      <h3>Distribución por Clasificación</h3>
-      <div class="chart-container"><canvas id="classChart"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Distribución por Estado</h3>
-      <div class="chart-container"><canvas id="statusChart"></canvas></div>
-    </div>
+    <div class="card"><h3>Por Clasificaci&oacute;n</h3><div class="chart-container"><canvas id="cC"></canvas></div></div>
+    <div class="card"><h3>Por Estado</h3><div class="chart-container"><canvas id="sC"></canvas></div></div>
   </div>
-
   <div class="charts-row">
-    <div class="card">
-      <h3>Tickets por Agente</h3>
-      <div class="chart-container"><canvas id="ownerChart"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Tickets por Cliente (Top 2)</h3>
-      <div class="chart-container"><canvas id="accountChart"></canvas></div>
-    </div>
+    <div class="card"><h3>Tickets por Agente</h3><div class="chart-container"><canvas id="oC"></canvas></div></div>
+    <div class="card"><h3>Tickets por Cliente (Top 2)</h3><div class="chart-container"><canvas id="aC"></canvas></div></div>
   </div>
-
   <div class="card">
     <h3>Todos los Tickets</h3>
-    <input type="text" class="search-bar" id="searchInput" placeholder="🔍 Buscar por ID, cliente, asunto, agente..." onkeyup="filterTable()">
-    <div style="overflow-x:auto;">
-    <table id="ticketTable">
+    <input type="text" class="search-bar" id="q" placeholder="&#128269; Buscar..." onkeyup="filterTable()">
+    <div style="overflow-x:auto"><table id="T">
       <thead><tr><th>ID</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Tipo</th><th>Estado</th><th>Vence</th><th>OD</th></tr></thead>
-      <tbody id="tableBody">
-        
+      <tbody id="TB">
         <tr>
           <td>26498</td>
           <td title="ITOCHU LATIN AMERICA, S.A.">ITOCHU LATIN AMERICA, S.A.</td>
@@ -92,7 +71,7 @@
           <td>Dalida Buitrago</td>
           <td>Service Requests</td>
           <td><span style="background:#F5A623;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Waiting On Customer</span></td>
-          <td>—</td>
+          <td>&#8212;</td>
           <td style="text-align:center;"></td>
         </tr>
         <tr>
@@ -102,74 +81,19 @@
           <td>Dalida Buitrago</td>
           <td>Service Requests</td>
           <td><span style="background:#F5A623;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Waiting On Customer</span></td>
-          <td>—</td>
+          <td>&#8212;</td>
           <td style="text-align:center;"></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
+        </tr></tbody>
+    </table></div>
   </div>
 </div>
-<div class="footer">Solusoft · Dashboard Célula Epsilon · 2026-03-27</div>
-
+<div class="footer">Solusoft &middot; C&eacute;lula Epsilon &middot; 2026-03-27</div>
 <script>
-const classCtx = document.getElementById('classChart');
-new Chart(classCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ["Service Requests"],
-    datasets: [{ data: [2], backgroundColor: ["#2E86DE"], borderWidth: 2 }]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
-});
-
-const statusCtx = document.getElementById('statusChart');
-new Chart(statusCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ["Waiting On Customer"],
-    datasets: [{ data: [2], backgroundColor: ["#F5A623"], borderWidth: 2 }]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
-});
-
-const ownerCtx = document.getElementById('ownerChart');
-new Chart(ownerCtx, {
-  type: 'bar',
-  data: {
-    labels: ["Dalida Buitrago"],
-    datasets: [{ label: 'Tickets', data: [2], backgroundColor: '#3A1A6Bcc', borderColor: '#3A1A6B', borderWidth: 1, borderRadius: 4 }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } }, y: { ticks: { font: { size: 11 } } } }
-  }
-});
-
-const accountCtx = document.getElementById('accountChart');
-new Chart(accountCtx, {
-  type: 'bar',
-  data: {
-    labels: ["ITOCHU LATIN AMERICA, S.A.", "TELERED S.A."],
-    datasets: [{ label: 'Tickets', data: [1, 1], backgroundColor: '#3A1A6Baa', borderColor: '#3A1A6B', borderWidth: 1, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { font: { size: 10 }, maxRotation: 45 } } }
-  }
-});
-
-function filterTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const rows = document.getElementById('tableBody').getElementsByTagName('tr');
-  for (let r of rows) {
-    const text = r.textContent.toLowerCase();
-    r.style.display = text.includes(q) ? '' : 'none';
-  }
-}
+new Chart(document.getElementById('cC'),{type:'doughnut',data:{labels:["Service Requests"],datasets:[{data:[2],backgroundColor:["#2E86DE"],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11}}}}}}));
+new Chart(document.getElementById('sC'),{type:'doughnut',data:{labels:["Waiting On Customer"],datasets:[{data:[2],backgroundColor:["#F5A623"],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11}}}}}}));
+new Chart(document.getElementById('oC'),{type:'bar',data:{labels:["Dalida Buitrago"],datasets:[{label:'Tickets',data:[2],backgroundColor:'#3A1A6Bcc',borderColor:'#3A1A6B',borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{stepSize:1}},y:{ticks:{font:{size:11}}}}}}));
+new Chart(document.getElementById('aC'),{type:'bar',data:{labels:["ITOCHU LATIN AMERICA, S.A.", "TELERED S.A."],datasets:[{label:'Tickets',data:[1, 1],backgroundColor:'#3A1A6Baa',borderColor:'#3A1A6B',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}},x:{ticks:{font:{size:10},maxRotation:45}}}}}));
+function filterTable(){const q=document.getElementById('q').value.toLowerCase();for(const r of document.getElementById('TB').rows)r.style.display=r.textContent.toLowerCase().includes(q)?'':'none'}
 </script>
 </body>
 </html>

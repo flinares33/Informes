@@ -2,266 +2,72 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Estratégico — 2026-03-27</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Estrat&eacute;gico &mdash; 2026-03-27</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #333; }
-  .header { background: linear-gradient(135deg, #1B3A6B, #2E86DE); color: #fff; padding: 24px 30px; }
-  .header h1 { font-size: 26px; font-weight: 800; }
-  .header .subtitle { font-size: 13px; opacity: 0.85; margin-top: 6px; }
-  .container { padding: 24px 30px; max-width: 1400px; margin: 0 auto; }
-  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-top: 4px solid #1B3A6B; }
-  .kpi .value { font-size: 38px; font-weight: 800; }
-  .kpi .label { font-size: 12px; color: #777; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .celula-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .celula-card { background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-top: 5px solid #1B3A6B; text-decoration: none; color: #333; transition: transform 0.15s, box-shadow 0.15s; display: block; }
-  .celula-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
-  .celula-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-  .celula-total { font-size: 36px; font-weight: 800; color: #333; margin: 8px 0; }
-  .celula-detail { font-size: 12px; line-height: 1.8; }
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-  .card h3 { font-size: 14px; font-weight: 700; color: #444; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .chart-container { position: relative; height: 300px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #1B3A6B; color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; }
-  td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
-  tr:hover td { background: #f7f9ff; }
-  .section-title { font-size: 16px; font-weight: 700; color: #444; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
-  .footer { text-align: center; padding: 20px; color: #aaa; font-size: 12px; }
-  .badge-red { background: #E74C3C; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333}
+.header{background:linear-gradient(135deg,#1B3A6B,#2E86DE);color:#fff;padding:24px 30px}
+.header h1{font-size:26px;font-weight:800}
+.header .sub{font-size:13px;opacity:.85;margin-top:6px}
+.container{padding:24px 30px;max-width:1400px;margin:0 auto}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:4px solid #1B3A6B}
+.kpi .value{font-size:38px;font-weight:800}
+.kpi .label{font-size:12px;color:#777;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+.celula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.celula-card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:5px solid #1B3A6B;text-decoration:none;color:#333;transition:transform .15s,box-shadow .15s;display:block}
+.celula-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.celula-name{font-size:18px;font-weight:800;margin-bottom:4px}
+.celula-total{font-size:36px;font-weight:800;color:#333;margin:8px 0}
+.celula-detail{font-size:12px;line-height:1.8}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.card h3{font-size:14px;font-weight:700;color:#444;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px}
+.chart-container{position:relative;height:300px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#1B3A6B;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+td{padding:9px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:hover td{background:#f7f9ff}
+.section-title{font-size:16px;font-weight:700;color:#444;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #e0e0e0}
+.footer{text-align:center;padding:20px;color:#aaa;font-size:12px}
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>🏢 Dashboard Estratégico — Todas las Células</h1>
-  <div class="subtitle">Reporte semanal consolidado · 2026-03-27 · Solusoft — Soluciones y Servicios Tecnológicos</div>
+  <h1>&#127962; Dashboard Estrat&eacute;gico &mdash; Todas las C&eacute;lulas</h1>
+  <div class="sub">Reporte semanal consolidado &middot; 2026-03-27 &middot; Solusoft &mdash; Soluciones y Servicios Tecnol&oacute;gicos</div>
 </div>
-
 <div class="container">
   <div class="kpi-row">
-    <div class="kpi"><div class="value" style="color:#1B3A6B;">61</div><div class="label">Total Tickets</div></div>
-    <div class="kpi"><div class="value" style="color:#2E86DE;">19</div><div class="label">Abiertos</div></div>
-    <div class="kpi"><div class="value" style="color:#F5A623;">37</div><div class="label">Esp. Cliente</div></div>
-    <div class="kpi"><div class="value" style="color:#E74C3C;">5</div><div class="label">Escalados</div></div>
-    <div class="kpi"><div class="value" style="color:#E74C3C;">3</div><div class="label">Vencidos</div></div>
+    <div class="kpi"><div class="value" style="color:#1B3A6B">61</div><div class="label">Total Tickets</div></div>
+    <div class="kpi"><div class="value" style="color:#2E86DE">19</div><div class="label">Abiertos</div></div>
+    <div class="kpi"><div class="value" style="color:#F5A623">37</div><div class="label">Esp. Cliente</div></div>
+    <div class="kpi"><div class="value" style="color:#E74C3C">5</div><div class="label">Escalados</div></div>
+    <div class="kpi"><div class="value" style="color:#E74C3C">3</div><div class="label">Vencidos</div></div>
   </div>
-
-  <div class="section-title">📌 Acceso por Célula</div>
-  <div class="celula-grid">
-    
-        <a href="Dashboard_Alpha.html" class="celula-card" style="border-top-color:#1B3A6B;">
-          <div class="celula-name" style="color:#1B3A6B;">Alpha</div>
-          <div class="celula-total">19</div>
-          <div class="celula-detail">
-            <span style="color:#2E86DE;">🔵 6 Open</span>
-            <span style="color:#F5A623;">🟡 11 Esp.</span>
-            <span style="color:#E74C3C;">🔴 2 Esc.</span>
-            
-          </div>
-        </a>
-        <a href="Dashboard_Beta.html" class="celula-card" style="border-top-color:#1A6B3A;">
-          <div class="celula-name" style="color:#1A6B3A;">Beta</div>
-          <div class="celula-total">16</div>
-          <div class="celula-detail">
-            <span style="color:#2E86DE;">🔵 5 Open</span>
-            <span style="color:#F5A623;">🟡 10 Esp.</span>
-            <span style="color:#E74C3C;">🔴 1 Esc.</span>
-            <br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span>
-          </div>
-        </a>
-        <a href="Dashboard_Delta.html" class="celula-card" style="border-top-color:#6B4A1A;">
-          <div class="celula-name" style="color:#6B4A1A;">Delta</div>
-          <div class="celula-total">6</div>
-          <div class="celula-detail">
-            <span style="color:#2E86DE;">🔵 2 Open</span>
-            <span style="color:#F5A623;">🟡 3 Esp.</span>
-            <span style="color:#E74C3C;">🔴 1 Esc.</span>
-            <br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span>
-          </div>
-        </a>
-        <a href="Dashboard_Epsilon.html" class="celula-card" style="border-top-color:#3A1A6B;">
-          <div class="celula-name" style="color:#3A1A6B;">Epsilon</div>
-          <div class="celula-total">2</div>
-          <div class="celula-detail">
-            <span style="color:#2E86DE;">🔵 0 Open</span>
-            <span style="color:#F5A623;">🟡 2 Esp.</span>
-            <span style="color:#E74C3C;">🔴 0 Esc.</span>
-            
-          </div>
-        </a>
-        <a href="Dashboard_Gamma.html" class="celula-card" style="border-top-color:#6B1A3A;">
-          <div class="celula-name" style="color:#6B1A3A;">Gamma</div>
-          <div class="celula-total">18</div>
-          <div class="celula-detail">
-            <span style="color:#2E86DE;">🔵 6 Open</span>
-            <span style="color:#F5A623;">🟡 11 Esp.</span>
-            <span style="color:#E74C3C;">🔴 1 Esc.</span>
-            <br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span>
-          </div>
-        </a>
-  </div>
-
-  <div class="section-title">📊 Análisis Comparativo</div>
+  <div class="section-title">&#128204; Acceso por C&eacute;lula</div>
+  <div class="celula-grid"><a href="Dashboard_Alpha.html" class="celula-card" style="border-top-color:#1B3A6B;"><div class="celula-name" style="color:#1B3A6B;">Alpha</div><div class="celula-total">19</div><div class="celula-detail"><span style="color:#2E86DE;">&#9679; 6 Open</span> <span style="color:#F5A623;">&#9679; 11 Esp.</span> <span style="color:#E74C3C;">&#9679; 2 Esc.</span></div></a><a href="Dashboard_Beta.html" class="celula-card" style="border-top-color:#1A6B3A;"><div class="celula-name" style="color:#1A6B3A;">Beta</div><div class="celula-total">16</div><div class="celula-detail"><span style="color:#2E86DE;">&#9679; 5 Open</span> <span style="color:#F5A623;">&#9679; 10 Esp.</span> <span style="color:#E74C3C;">&#9679; 1 Esc.</span><br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span></div></a><a href="Dashboard_Delta.html" class="celula-card" style="border-top-color:#6B4A1A;"><div class="celula-name" style="color:#6B4A1A;">Delta</div><div class="celula-total">6</div><div class="celula-detail"><span style="color:#2E86DE;">&#9679; 2 Open</span> <span style="color:#F5A623;">&#9679; 3 Esp.</span> <span style="color:#E74C3C;">&#9679; 1 Esc.</span><br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span></div></a><a href="Dashboard_Epsilon.html" class="celula-card" style="border-top-color:#3A1A6B;"><div class="celula-name" style="color:#3A1A6B;">Epsilon</div><div class="celula-total">2</div><div class="celula-detail"><span style="color:#2E86DE;">&#9679; 0 Open</span> <span style="color:#F5A623;">&#9679; 2 Esp.</span> <span style="color:#E74C3C;">&#9679; 0 Esc.</span></div></a><a href="Dashboard_Gamma.html" class="celula-card" style="border-top-color:#6B1A3A;"><div class="celula-name" style="color:#6B1A3A;">Gamma</div><div class="celula-total">18</div><div class="celula-detail"><span style="color:#2E86DE;">&#9679; 6 Open</span> <span style="color:#F5A623;">&#9679; 11 Esp.</span> <span style="color:#E74C3C;">&#9679; 1 Esc.</span><br><span style="color:#E74C3C;font-weight:700;">&#9888; 1 Vencidos</span></div></a></div>
+  <div class="section-title">&#128202; An&aacute;lisis Comparativo</div>
   <div class="charts-row">
-    <div class="card">
-      <h3>Estado de Tickets por Célula</h3>
-      <div class="chart-container"><canvas id="stackedChart"></canvas></div>
-    </div>
-    <div class="card">
-      <h3>Clasificación Global</h3>
-      <div class="chart-container"><canvas id="globalClassChart"></canvas></div>
-    </div>
+    <div class="card"><h3>Estado por C&eacute;lula</h3><div class="chart-container"><canvas id="stackC"></canvas></div></div>
+    <div class="card"><h3>Clasificaci&oacute;n Global</h3><div class="chart-container"><canvas id="gClassC"></canvas></div></div>
   </div>
-
-  <div class="section-title">📋 Tabla Comparativa por Célula</div>
-  <div class="card" style="margin-bottom:24px;">
-    <table>
-      <thead><tr><th>Célula</th><th style="text-align:center;">Total</th><th style="text-align:center;">Abiertos</th><th style="text-align:center;">Esp. Cliente</th><th style="text-align:center;">Escalados</th><th style="text-align:center;">Vencidos</th><th>Link</th></tr></thead>
-      <tbody><tr>
-          <td><span style="background:#1B3A6B;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Alpha</span></td>
-          <td style="text-align:center;font-weight:700;">19</td>
-          <td style="text-align:center;color:#2E86DE;">6</td>
-          <td style="text-align:center;color:#F5A623;">11</td>
-          <td style="text-align:center;color:#E74C3C;">2</td>
-          <td style="text-align:center;color:#E74C3C;font-weight:400;">0</td>
-          <td><a href="Dashboard_Alpha.html" style="color:#1B3A6B;font-weight:600;text-decoration:none;">Ver →</a></td>
-        </tr><tr>
-          <td><span style="background:#1A6B3A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Beta</span></td>
-          <td style="text-align:center;font-weight:700;">16</td>
-          <td style="text-align:center;color:#2E86DE;">5</td>
-          <td style="text-align:center;color:#F5A623;">10</td>
-          <td style="text-align:center;color:#E74C3C;">1</td>
-          <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
-          <td><a href="Dashboard_Beta.html" style="color:#1A6B3A;font-weight:600;text-decoration:none;">Ver →</a></td>
-        </tr><tr>
-          <td><span style="background:#6B4A1A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Delta</span></td>
-          <td style="text-align:center;font-weight:700;">6</td>
-          <td style="text-align:center;color:#2E86DE;">2</td>
-          <td style="text-align:center;color:#F5A623;">3</td>
-          <td style="text-align:center;color:#E74C3C;">1</td>
-          <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
-          <td><a href="Dashboard_Delta.html" style="color:#6B4A1A;font-weight:600;text-decoration:none;">Ver →</a></td>
-        </tr><tr>
-          <td><span style="background:#3A1A6B;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Epsilon</span></td>
-          <td style="text-align:center;font-weight:700;">2</td>
-          <td style="text-align:center;color:#2E86DE;">0</td>
-          <td style="text-align:center;color:#F5A623;">2</td>
-          <td style="text-align:center;color:#E74C3C;">0</td>
-          <td style="text-align:center;color:#E74C3C;font-weight:400;">0</td>
-          <td><a href="Dashboard_Epsilon.html" style="color:#3A1A6B;font-weight:600;text-decoration:none;">Ver →</a></td>
-        </tr><tr>
-          <td><span style="background:#6B1A3A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Gamma</span></td>
-          <td style="text-align:center;font-weight:700;">18</td>
-          <td style="text-align:center;color:#2E86DE;">6</td>
-          <td style="text-align:center;color:#F5A623;">11</td>
-          <td style="text-align:center;color:#E74C3C;">1</td>
-          <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
-          <td><a href="Dashboard_Gamma.html" style="color:#6B1A3A;font-weight:600;text-decoration:none;">Ver →</a></td>
-        </tr></tbody>
-    </table>
+  <div class="section-title">&#128203; Tabla Comparativa</div>
+  <div class="card" style="margin-bottom:24px">
+    <table><thead><tr><th>C&eacute;lula</th><th style="text-align:center">Total</th><th style="text-align:center">Abiertos</th><th style="text-align:center">Esp. Cliente</th><th style="text-align:center">Escalados</th><th style="text-align:center">Vencidos</th><th>Link</th></tr></thead>
+    <tbody><tr><td><span style="background:#1B3A6B;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Alpha</span></td><td style="text-align:center;font-weight:700;">19</td><td style="text-align:center;color:#2E86DE;">6</td><td style="text-align:center;color:#F5A623;">11</td><td style="text-align:center;color:#E74C3C;">2</td><td style="text-align:center;color:#E74C3C;font-weight:400;">0</td><td><a href="Dashboard_Alpha.html" style="color:#1B3A6B;font-weight:600;text-decoration:none;">Ver &rarr;</a></td></tr><tr><td><span style="background:#1A6B3A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Beta</span></td><td style="text-align:center;font-weight:700;">16</td><td style="text-align:center;color:#2E86DE;">5</td><td style="text-align:center;color:#F5A623;">10</td><td style="text-align:center;color:#E74C3C;">1</td><td style="text-align:center;color:#E74C3C;font-weight:700;">1</td><td><a href="Dashboard_Beta.html" style="color:#1A6B3A;font-weight:600;text-decoration:none;">Ver &rarr;</a></td></tr><tr><td><span style="background:#6B4A1A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Delta</span></td><td style="text-align:center;font-weight:700;">6</td><td style="text-align:center;color:#2E86DE;">2</td><td style="text-align:center;color:#F5A623;">3</td><td style="text-align:center;color:#E74C3C;">1</td><td style="text-align:center;color:#E74C3C;font-weight:700;">1</td><td><a href="Dashboard_Delta.html" style="color:#6B4A1A;font-weight:600;text-decoration:none;">Ver &rarr;</a></td></tr><tr><td><span style="background:#3A1A6B;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Epsilon</span></td><td style="text-align:center;font-weight:700;">2</td><td style="text-align:center;color:#2E86DE;">0</td><td style="text-align:center;color:#F5A623;">2</td><td style="text-align:center;color:#E74C3C;">0</td><td style="text-align:center;color:#E74C3C;font-weight:400;">0</td><td><a href="Dashboard_Epsilon.html" style="color:#3A1A6B;font-weight:600;text-decoration:none;">Ver &rarr;</a></td></tr><tr><td><span style="background:#6B1A3A;color:#fff;padding:3px 12px;border-radius:12px;font-weight:700;">Gamma</span></td><td style="text-align:center;font-weight:700;">18</td><td style="text-align:center;color:#2E86DE;">6</td><td style="text-align:center;color:#F5A623;">11</td><td style="text-align:center;color:#E74C3C;">1</td><td style="text-align:center;color:#E74C3C;font-weight:700;">1</td><td><a href="Dashboard_Gamma.html" style="color:#6B1A3A;font-weight:600;text-decoration:none;">Ver &rarr;</a></td></tr></tbody></table>
   </div>
-
-  <div class="section-title">⚠️ Tickets Escalados (5)</div>
-  <div class="card" style="margin-bottom:24px;">
-    <table><thead><tr><th>ID</th><th>Célula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Vence</th></tr></thead><tbody><tr>
-          <td>26555</td>
-          <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Alpha</span></td>
-          <td title="BANCO LA HIPOTECARIA">BANCO LA HIPOTECARIA</td>
-          <td title="Recomendación de optimización de rendimiento – Máquinas Virtuales en Azure">Recomendación de optimización de rendimiento – Máquinas...</td>
-          <td>Bryan Cruz</td>
-          <td>—</td>
-        </tr><tr>
-          <td>24555</td>
-          <td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Gamma</span></td>
-          <td title="EMPRESA DE TRANSMISION ELECTRICA, S.A.">EMPRESA DE TRANSMISION ELECTRICA, S.A.</td>
-          <td title="Eliminar documentacion al editar nota Saliente">Eliminar documentacion al editar nota Saliente</td>
-          <td>Dalida Buitrago</td>
-          <td>11/21/2025 8:02</td>
-        </tr><tr>
-          <td>26512</td>
-          <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Alpha</span></td>
-          <td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td>
-          <td title="RE: [GBM Cloud Defender][Attack Path] CRÍTICA - Reporte de ruta de ataque identificado: Internet exposed AWS EC2 instance with high severity vulnerabilities allows lateral movement to AWS S3 bucket">RE: [GBM Cloud Defender][Attack Path] CRÍTICA - Reporte...</td>
-          <td>Bryan Cruz</td>
-          <td>3/27/2026 12:26</td>
-        </tr><tr>
-          <td>26309</td>
-          <td><span style="background:#6B4A1A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Delta</span></td>
-          <td title="ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN">ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN</td>
-          <td title="Solicitud por parte del equipo de IT del cliente la activación de herramienta para monitoreo">Solicitud por parte del equipo de IT del cliente la act...</td>
-          <td>Isaac Sandoval</td>
-          <td>—</td>
-        </tr><tr>
-          <td>24370</td>
-          <td><span style="background:#1A6B3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Beta</span></td>
-          <td title="THE PANAMA CLINIC MEDICAL, S.A.">THE PANAMA CLINIC MEDICAL, S.A.</td>
-          <td title="Respaldo de Servidores Virtuales OVM">Respaldo de Servidores Virtuales OVM</td>
-          <td>Jhonny Gutierrez</td>
-          <td>—</td>
-        </tr></tbody></table>
-  </div>
-
-  <div class="section-title">🔴 Tickets Vencidos (3)</div>
-  <div class="card" style="margin-bottom:24px;">
-    <table><thead><tr><th>ID</th><th>Célula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Venció</th></tr></thead><tbody><tr>
-          <td>24555</td>
-          <td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Gamma</span></td>
-          <td title="EMPRESA DE TRANSMISION ELECTRICA, S.A.">EMPRESA DE TRANSMISION ELECTRICA, S.A.</td>
-          <td title="Eliminar documentacion al editar nota Saliente">Eliminar documentacion al editar nota Saliente</td>
-          <td>Dalida Buitrago</td>
-          <td>11/21/2025 8:02</td>
-        </tr><tr>
-          <td>26483</td>
-          <td><span style="background:#6B4A1A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Delta</span></td>
-          <td title="TECNASA (TECNOLOGÍA APLICADA, S.A.)">TECNASA (TECNOLOGÍA APLICADA, S.A.)</td>
-          <td title="TECNASA -  Fortalecimiento de PPS">TECNASA -  Fortalecimiento de PPS</td>
-          <td>Isaac Sandoval</td>
-          <td>3/23/2026 9:47</td>
-        </tr><tr>
-          <td>26540</td>
-          <td><span style="background:#1A6B3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Beta</span></td>
-          <td title="THE PANAMA CLINIC MEDICAL, S.A.">THE PANAMA CLINIC MEDICAL, S.A.</td>
-          <td title="Caida de Nodo1 10.1.1.100">Caida de Nodo1 10.1.1.100</td>
-          <td>Abdiel Mendoza</td>
-          <td>3/26/2026 23:04</td>
-        </tr></tbody></table>
-  </div>
+  <div class="section-title">&#9888;&#65039; Tickets Escalados (5)</div>
+  <div class="card" style="margin-bottom:24px"><table><thead><tr><th>ID</th><th>C&eacute;lula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Vence</th></tr></thead><tbody><tr><td>26555</td><td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Alpha</span></td><td title="BANCO LA HIPOTECARIA">BANCO LA HIPOTECARIA</td><td title="Recomendación de optimización de rendimiento – Máquinas Virtuales en Azure">Recomendación de optimización de rendimiento – Máquinas...</td><td>Bryan Cruz</td><td>&#8212;</td></tr><tr><td>24555</td><td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Gamma</span></td><td title="EMPRESA DE TRANSMISION ELECTRICA, S.A.">EMPRESA DE TRANSMISION ELECTRICA, S.A.</td><td title="Eliminar documentacion al editar nota Saliente">Eliminar documentacion al editar nota Saliente</td><td>Dalida Buitrago</td><td>11/21/2025 8:02</td></tr><tr><td>26512</td><td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Alpha</span></td><td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td><td title="RE: [GBM Cloud Defender][Attack Path] CRÍTICA - Reporte de ruta de ataque identificado: Internet exposed AWS EC2 instance with high severity vulnerabilities allows lateral movement to AWS S3 bucket">RE: [GBM Cloud Defender][Attack Path] CRÍTICA - Reporte...</td><td>Bryan Cruz</td><td>3/27/2026 12:26</td></tr><tr><td>26309</td><td><span style="background:#6B4A1A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Delta</span></td><td title="ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN">ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN</td><td title="Solicitud por parte del equipo de IT del cliente la activación de herramienta para monitoreo">Solicitud por parte del equipo de IT del cliente la act...</td><td>Isaac Sandoval</td><td>&#8212;</td></tr><tr><td>24370</td><td><span style="background:#1A6B3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Beta</span></td><td title="THE PANAMA CLINIC MEDICAL, S.A.">THE PANAMA CLINIC MEDICAL, S.A.</td><td title="Respaldo de Servidores Virtuales OVM">Respaldo de Servidores Virtuales OVM</td><td>Jhonny Gutierrez</td><td>&#8212;</td></tr></tbody></table></div>
+  <div class="section-title">&#128308; Tickets Vencidos (3)</div>
+  <div class="card" style="margin-bottom:24px"><table><thead><tr><th>ID</th><th>C&eacute;lula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Vence</th></tr></thead><tbody><tr><td>24555</td><td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Gamma</span></td><td title="EMPRESA DE TRANSMISION ELECTRICA, S.A.">EMPRESA DE TRANSMISION ELECTRICA, S.A.</td><td title="Eliminar documentacion al editar nota Saliente">Eliminar documentacion al editar nota Saliente</td><td>Dalida Buitrago</td><td>11/21/2025 8:02</td></tr><tr><td>26483</td><td><span style="background:#6B4A1A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Delta</span></td><td title="TECNASA (TECNOLOGÍA APLICADA, S.A.)">TECNASA (TECNOLOGÍA APLICADA, S.A.)</td><td title="TECNASA -  Fortalecimiento de PPS">TECNASA -  Fortalecimiento de PPS</td><td>Isaac Sandoval</td><td>3/23/2026 9:47</td></tr><tr><td>26540</td><td><span style="background:#1A6B3A;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;">Beta</span></td><td title="THE PANAMA CLINIC MEDICAL, S.A.">THE PANAMA CLINIC MEDICAL, S.A.</td><td title="Caida de Nodo1 10.1.1.100">Caida de Nodo1 10.1.1.100</td><td>Abdiel Mendoza</td><td>3/26/2026 23:04</td></tr></tbody></table></div>
 </div>
-
-<div class="footer">Solusoft · Dashboard Estratégico · 2026-03-27</div>
-
+<div class="footer">Solusoft &middot; Dashboard Estrat&eacute;gico &middot; 2026-03-27</div>
 <script>
-const stackedCtx = document.getElementById('stackedChart');
-new Chart(stackedCtx, {
-  type: 'bar',
-  data: {
-    labels: ["Alpha", "Beta", "Delta", "Epsilon", "Gamma"],
-    datasets: [
-      { label: 'Open', data: [6, 5, 2, 0, 6], backgroundColor: '#2E86DE', borderRadius: 4 },
-      { label: 'Waiting On Customer', data: [11, 10, 3, 2, 11], backgroundColor: '#F5A623', borderRadius: 4 },
-      { label: 'Escalated', data: [2, 1, 1, 0, 1], backgroundColor: '#E74C3C', borderRadius: 4 }
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'top' } },
-    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }
-  }
-});
-
-const globalClassCtx = document.getElementById('globalClassChart');
-new Chart(globalClassCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ["Change Requests", "Incidents", "Service Requests", "Monitoring and Events", "Recommendations", "Sin clasificar"],
-    datasets: [{ data: [1, 6, 27, 3, 10, 14], backgroundColor: ["#27AE60", "#E74C3C", "#2E86DE", "#F5A623", "#9B59B6", "#95A5A6"], borderWidth: 2 }]
-  },
-  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
-});
+new Chart(document.getElementById('stackC'),{type:'bar',data:{labels:["Alpha", "Beta", "Delta", "Epsilon", "Gamma"],datasets:[{label:'Open',data:[6, 5, 2, 0, 6],backgroundColor:'#2E86DE',borderRadius:4},{label:'Waiting On Customer',data:[11, 10, 3, 2, 11],backgroundColor:'#F5A623',borderRadius:4},{label:'Escalated',data:[2, 1, 1, 0, 1],backgroundColor:'#E74C3C',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,ticks:{stepSize:1}}}}}));
+new Chart(document.getElementById('gClassC'),{type:'doughnut',data:{labels:["Change Requests", "Incidents", "Service Requests", "Monitoring and Events", "Recommendations", "Sin clasificar"],datasets:[{data:[1, 6, 27, 3, 10, 14],backgroundColor:["#27AE60", "#E74C3C", "#2E86DE", "#F5A623", "#9B59B6", "#95A5A6"],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11}}}}}}));
 </script>
 </body>
 </html>

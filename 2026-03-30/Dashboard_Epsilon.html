@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Célula Epsilon</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+
+:root {
+  --bg:       #F0F2F5;
+  --surface:  #FFFFFF;
+  --surface2: #F8F9FB;
+  --border:   #E4E8EF;
+  --text:     #1A1A2E;
+  --text2:    #555566;
+  --text3:    #888899;
+  --shadow:   0 2px 10px rgba(0,0,0,.08);
+  --grid-ln:  rgba(0,0,0,.06);
+  --accent:   #F5A623;
+  --toggle-bg:#e0e3ea;
+}
+body.dark {
+  --bg:       #0F1117;
+  --surface:  #1A1D27;
+  --surface2: #22263A;
+  --border:   #2E3350;
+  --text:     #E8EAF2;
+  --text2:    #A0A8C0;
+  --text3:    #606880;
+  --shadow:   0 2px 14px rgba(0,0,0,.45);
+  --grid-ln:  rgba(255,255,255,.06);
+  --accent:   #F5A623;
+  --toggle-bg:#2E3350;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;transition:background .25s,color .2s,border-color .2s;}
+body{background:var(--bg);color:var(--text);}
+
+/* TOGGLE */
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:999;
+  display:flex;align-items:center;gap:8px;background:var(--toggle-bg);
+  border:1px solid var(--border);border-radius:30px;padding:6px 14px;cursor:pointer;
+  font-size:.8rem;font-weight:600;color:var(--text2);box-shadow:var(--shadow);}
+.theme-toggle .icon{font-size:1.1rem;}
+.theme-toggle:hover{opacity:.85;}
+
+/* HEADER */
+.header{color:#fff;padding:20px 32px 16px;border-bottom:4px solid var(--accent);}
+.header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.01em;}
+.header .meta{font-size:.78rem;opacity:.82;margin-top:5px;}
+
+/* LAYOUT */
+.container{max-width:1260px;margin:0 auto;padding:24px 28px 50px;}
+
+/* KPI */
+.kpi-row{display:flex;gap:14px;margin-bottom:26px;flex-wrap:wrap;}
+.kpi{background:var(--surface);border-radius:12px;padding:18px 16px;flex:1;min-width:120px;
+     box-shadow:var(--shadow);border-top:4px solid #ddd;text-align:center;}
+.kpi .val{font-size:2.1rem;font-weight:800;line-height:1.1;}
+.kpi .lbl{font-size:.7rem;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+
+/* CHARTS */
+.charts-row{display:grid;gap:18px;margin-bottom:22px;}
+.charts-2{grid-template-columns:1fr 1fr;}
+.charts-3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--surface);border-radius:12px;padding:20px 22px;
+      box-shadow:var(--shadow);border:1px solid var(--border);}
+.card h3{font-size:.88rem;font-weight:700;color:var(--text2);margin-bottom:14px;
+          border-bottom:1px solid var(--border);padding-bottom:9px;}
+.chart-wrap{position:relative;height:230px;}
+.chart-wrap-tall{position:relative;height:310px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.79rem;}
+th{padding:9px 11px;text-align:left;font-weight:600;font-size:.75rem;
+   border-bottom:2px solid var(--border);color:var(--text2);background:var(--surface2);}
+td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text);}
+tr:hover td{background:var(--surface2);}
+.t-center{text-align:center;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.71rem;font-weight:700;white-space:nowrap;}
+.b-open{background:#DBEEFF;color:#1565C0;}
+.b-woc {background:#FFF3CD;color:#856404;}
+.b-esc {background:#FFE0DC;color:#C62828;}
+.b-yes {background:#FFE0DC;color:#C62828;}
+.b-no  {background:#D4EDDA;color:#155724;}
+body.dark .b-open{background:#1A3A6B;color:#90CAF9;}
+body.dark .b-woc {background:#3D2E00;color:#FFD54F;}
+body.dark .b-esc {background:#4A1010;color:#EF9A9A;}
+body.dark .b-yes {background:#4A1010;color:#EF9A9A;}
+body.dark .b-no  {background:#0D3320;color:#A5D6A7;}
+
+/* ROW HIGHLIGHTS */
+tr.od-row td{background:#FFF4F3 !important;}
+body.dark tr.od-row td{background:#2A1515 !important;}
+
+/* SECTION TITLE */
+.section-title{font-size:1rem;font-weight:700;margin:26px 0 13px;
+               border-left:4px solid var(--accent);padding-left:11px;color:var(--text);}
+
+/* FOOTER */
+footer{text-align:center;font-size:.72rem;color:var(--text3);margin-top:34px;
+       padding-top:16px;border-top:1px solid var(--border);}
+
+@media(max-width:700px){.charts-2,.charts-3{grid-template-columns:1fr;}}
+
+.header{background:#7D3C98;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;border:1.5px solid var(--accent);color:var(--accent);background:transparent;transition:background .2s,color .2s;margin:12px 0 8px 16px;}
+.back-btn:hover{background:var(--accent);color:#fff;}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Inicio</a>
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span class="icon" id="themeIcon">🌙</span>
+  <span id="themeLabel">Modo Oscuro</span>
+</button>
+<div class="header">
+  <h1>Dashboard de Tickets — Célula Epsilon</h1>
+  <div class="meta">Generado por: Francisco Linares &nbsp;|&nbsp; 3/29/2026 23:21 &nbsp;|&nbsp; Soluciones y Servicios Tecnológicos</div>
+</div>
+<div class="container">
+
+<div class="kpi-row"><div class="kpi" style="border-color:#7D3C98"><div class="val" style="color:#7D3C98">1</div><div class="lbl">Total Tickets</div></div>
+<div class="kpi" style="border-color:#2E86DE"><div class="val" style="color:#2E86DE">0</div><div class="lbl">Abiertos</div></div>
+<div class="kpi" style="border-color:#F5A623"><div class="val" style="color:#F5A623">1</div><div class="lbl">Esp. Cliente</div></div>
+<div class="kpi" style="border-color:#E74C3C"><div class="val" style="color:#E74C3C">0</div><div class="lbl">Escalados</div></div>
+<div class="kpi" style="border-color:#E74C3C"><div class="val" style="color:#E74C3C">0</div><div class="lbl">Vencidos</div></div>
+</div>
+
+<div class="section-title">Distribución por Clasificación y Estado</div>
+<div class="charts-row charts-2">
+  <div class="card"><h3>Por Clasificación</h3><div class="chart-wrap"><canvas id="c_class"></canvas></div></div>
+  <div class="card"><h3>Por Estado</h3><div class="chart-wrap"><canvas id="c_status"></canvas></div></div>
+</div>
+
+<div class="section-title">Por Agente y por Cliente</div>
+<div class="charts-row charts-2">
+  <div class="card"><h3>Carga por Agente</h3><div class="chart-wrap"><canvas id="c_owner"></canvas></div></div>
+  <div class="card"><h3>Tickets por Cliente</h3><div class="chart-wrap-tall"><canvas id="c_client"></canvas></div></div>
+</div>
+
+<div class="section-title">Detalle de Tickets</div>
+<div class="card"><div class="table-wrap">
+<table>
+  <thead><tr><th class="t-center">ID</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Clasificación</th><th class="t-center">Estado</th><th class="t-center">Vence</th><th class="t-center">OD</th></tr></thead>
+  <tbody><tr><td class="t-center"><b>26545</b></td><td title="TELERED S.A.">TELERED S.A.</td><td title="Sesión - Revisión de Historias de Usuario para automatización">Sesión - Revisión de Historias de Usuario para automatización</td><td>Dalida Buitrago</td><td>Service Requests</td><td class="t-center"><span class="badge b-woc">Esp.Cliente</span></td><td class="t-center">-</td><td class="t-center"><span class="badge b-no">NO</span></td></tr>
+</tbody>
+</table></div></div>
+
+<footer>Soluciones y Servicios Tecnológicos &nbsp;|&nbsp; Dashboard Célula Epsilon &nbsp;|&nbsp; 3/29/2026 23:21</footer>
+</div>
+<script>
+
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  if(saved==='dark') document.body.classList.add('dark');
+  function setIcon(){
+    const dark = document.body.classList.contains('dark');
+    document.getElementById('themeIcon').textContent = dark ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = dark ? 'Modo Claro' : 'Modo Oscuro';
+  }
+  window.toggleTheme = function(){
+    document.body.classList.toggle('dark');
+    const dark = document.body.classList.contains('dark');
+    localStorage.setItem('theme', dark?'dark':'light');
+    setIcon();
+    updateChartThemes();
+  };
+  document.addEventListener('DOMContentLoaded', setIcon);
+})();
+
+// Chart.js global theme helpers
+Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+Chart.defaults.font.size = 12;
+
+function getThemeColors() {
+  const dark = document.body.classList.contains('dark');
+  return {
+    text:    dark ? '#B0B8D0' : '#555566',
+    grid:    dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+    bg:      dark ? '#1A1D27' : '#FFFFFF',
+    tooltip: dark ? '#22263A' : '#FFFFFF',
+    ttext:   dark ? '#E8EAF2' : '#1A1A2E',
+  };
+}
+
+var allCharts = [];
+
+function makeChartDefaults(extra) {
+  const tc = getThemeColors();
+  return Object.assign({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: tc.text, boxWidth: 13, font: {size:11} }
+      },
+      tooltip: {
+        backgroundColor: tc.tooltip,
+        titleColor: tc.ttext,
+        bodyColor: tc.text,
+        borderColor: 'rgba(128,128,128,0.3)',
+        borderWidth: 1,
+        padding: 10,
+      }
+    },
+    scales: {}
+  }, extra || {});
+}
+
+function applyScales(opts, axes) {
+  const tc = getThemeColors();
+  axes.forEach(function(axis) {
+    var cfg = {
+      ticks: { color: tc.text, font:{size:11} },
+      grid:  { color: tc.grid  }
+    };
+    if(axis.noGrid) cfg.grid = {display:false};
+    if(axis.stacked) cfg.stacked = true;
+    opts.scales[axis.id] = cfg;
+  });
+  return opts;
+}
+
+function updateChartThemes() {
+  const tc = getThemeColors();
+  allCharts.forEach(function(ch) {
+    if(!ch) return;
+    // Update legend
+    if(ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels)
+      ch.options.plugins.legend.labels.color = tc.text;
+    // Update tooltip
+    if(ch.options.plugins && ch.options.plugins.tooltip) {
+      ch.options.plugins.tooltip.backgroundColor = tc.tooltip;
+      ch.options.plugins.tooltip.titleColor = tc.ttext;
+      ch.options.plugins.tooltip.bodyColor = tc.text;
+    }
+    // Update scales
+    Object.values(ch.options.scales || {}).forEach(function(scale) {
+      if(scale.ticks) scale.ticks.color = tc.text;
+      if(scale.grid && scale.grid.display !== false) scale.grid.color = tc.grid;
+    });
+    ch.update();
+  });
+}
+
+
+
+allCharts.push(new Chart(document.getElementById('c_class'), {
+  type: 'doughnut',
+  data: {
+    labels: ["Service Requests"],
+    datasets: [{
+      data: [1],
+      backgroundColor: ["#2E86DE"],
+      borderWidth: 3,
+      borderColor: getThemeColors().bg,
+      hoverOffset: 8
+    }]
+  },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: tc.text, boxWidth: 13, font:{size:11}, padding:12 }
+        },
+        tooltip: {
+          backgroundColor: tc.tooltip, titleColor: tc.ttext, bodyColor: tc.text,
+          borderColor:'rgba(128,128,128,.3)', borderWidth:1, padding:10,
+          callbacks: {
+            label: function(c) {
+              var total = c.dataset.data.reduce(function(a,b){return a+b;}, 0);
+              return ' ' + c.label + ': ' + c.raw + '  (' + Math.round(c.parsed/total*100) + '%)';
+            }
+          }
+        }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('c_status'), {
+  type: 'doughnut',
+  data: {
+    labels: ["Waiting On Customer"],
+    datasets: [{
+      data: [1],
+      backgroundColor: ["#F5A623"],
+      borderWidth: 3,
+      borderColor: getThemeColors().bg,
+      hoverOffset: 8
+    }]
+  },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: tc.text, boxWidth: 13, font:{size:11}, padding:12 }
+        },
+        tooltip: {
+          backgroundColor: tc.tooltip, titleColor: tc.ttext, bodyColor: tc.text,
+          borderColor:'rgba(128,128,128,.3)', borderWidth:1, padding:10,
+          callbacks: {
+            label: function(c) {
+              var total = c.dataset.data.reduce(function(a,b){return a+b;}, 0);
+              return ' ' + c.label + ': ' + c.raw + '  (' + Math.round(c.parsed/total*100) + '%)';
+            }
+          }
+        }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('c_owner'), {
+  type: 'bar',
+  data: {
+    labels: ["Dalida Buitrago"],
+    datasets: [{
+      data: [1],
+      backgroundColor: '#7D3C98CC',
+      borderColor: '#7D3C98',
+      borderWidth: 1, borderRadius: 5
+    }]
+  },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: {display:false},
+        tooltip: {backgroundColor:tc.tooltip,titleColor:tc.ttext,bodyColor:tc.text,borderColor:'rgba(128,128,128,.3)',borderWidth:1,padding:10}
+      },
+      scales: {
+        x: { grid:{color:tc.grid}, ticks:{color:tc.text,font:{size:11}} },
+        y: { grid:{display:false}, ticks:{color:tc.text,font:{size:11}} }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('c_client'), {
+  type: 'bar',
+  data: { labels: ["TELERED S.A."], datasets: [{"label": "Tickets", "data": [1], "backgroundColor": "#7D3C98BB", "borderColor": "#7D3C98", "borderWidth": 1, "borderRadius": 4}] },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{color:tc.text,font:{size:11},boxWidth:13} },
+        tooltip: {backgroundColor:tc.tooltip,titleColor:tc.ttext,bodyColor:tc.text,borderColor:'rgba(128,128,128,.3)',borderWidth:1,padding:10}
+      },
+      scales: {
+        x: { stacked:false, grid:{display:false}, ticks:{color:tc.text,font:{size:11},maxRotation:30} },
+        y: { stacked:false, grid:{color:tc.grid}, ticks:{color:tc.text,font:{size:11}} }
+      }
+    };
+  })()
+}));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Estratégico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+
+:root {
+  --bg:       #F0F2F5;
+  --surface:  #FFFFFF;
+  --surface2: #F8F9FB;
+  --border:   #E4E8EF;
+  --text:     #1A1A2E;
+  --text2:    #555566;
+  --text3:    #888899;
+  --shadow:   0 2px 10px rgba(0,0,0,.08);
+  --grid-ln:  rgba(0,0,0,.06);
+  --accent:   #F5A623;
+  --toggle-bg:#e0e3ea;
+}
+body.dark {
+  --bg:       #0F1117;
+  --surface:  #1A1D27;
+  --surface2: #22263A;
+  --border:   #2E3350;
+  --text:     #E8EAF2;
+  --text2:    #A0A8C0;
+  --text3:    #606880;
+  --shadow:   0 2px 14px rgba(0,0,0,.45);
+  --grid-ln:  rgba(255,255,255,.06);
+  --accent:   #F5A623;
+  --toggle-bg:#2E3350;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;transition:background .25s,color .2s,border-color .2s;}
+body{background:var(--bg);color:var(--text);}
+
+/* TOGGLE */
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:999;
+  display:flex;align-items:center;gap:8px;background:var(--toggle-bg);
+  border:1px solid var(--border);border-radius:30px;padding:6px 14px;cursor:pointer;
+  font-size:.8rem;font-weight:600;color:var(--text2);box-shadow:var(--shadow);}
+.theme-toggle .icon{font-size:1.1rem;}
+.theme-toggle:hover{opacity:.85;}
+
+/* HEADER */
+.header{color:#fff;padding:20px 32px 16px;border-bottom:4px solid var(--accent);}
+.header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.01em;}
+.header .meta{font-size:.78rem;opacity:.82;margin-top:5px;}
+
+/* LAYOUT */
+.container{max-width:1260px;margin:0 auto;padding:24px 28px 50px;}
+
+/* KPI */
+.kpi-row{display:flex;gap:14px;margin-bottom:26px;flex-wrap:wrap;}
+.kpi{background:var(--surface);border-radius:12px;padding:18px 16px;flex:1;min-width:120px;
+     box-shadow:var(--shadow);border-top:4px solid #ddd;text-align:center;}
+.kpi .val{font-size:2.1rem;font-weight:800;line-height:1.1;}
+.kpi .lbl{font-size:.7rem;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+
+/* CHARTS */
+.charts-row{display:grid;gap:18px;margin-bottom:22px;}
+.charts-2{grid-template-columns:1fr 1fr;}
+.charts-3{grid-template-columns:1fr 1fr 1fr;}
+.card{background:var(--surface);border-radius:12px;padding:20px 22px;
+      box-shadow:var(--shadow);border:1px solid var(--border);}
+.card h3{font-size:.88rem;font-weight:700;color:var(--text2);margin-bottom:14px;
+          border-bottom:1px solid var(--border);padding-bottom:9px;}
+.chart-wrap{position:relative;height:230px;}
+.chart-wrap-tall{position:relative;height:310px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.79rem;}
+th{padding:9px 11px;text-align:left;font-weight:600;font-size:.75rem;
+   border-bottom:2px solid var(--border);color:var(--text2);background:var(--surface2);}
+td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text);}
+tr:hover td{background:var(--surface2);}
+.t-center{text-align:center;}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.71rem;font-weight:700;white-space:nowrap;}
+.b-open{background:#DBEEFF;color:#1565C0;}
+.b-woc {background:#FFF3CD;color:#856404;}
+.b-esc {background:#FFE0DC;color:#C62828;}
+.b-yes {background:#FFE0DC;color:#C62828;}
+.b-no  {background:#D4EDDA;color:#155724;}
+body.dark .b-open{background:#1A3A6B;color:#90CAF9;}
+body.dark .b-woc {background:#3D2E00;color:#FFD54F;}
+body.dark .b-esc {background:#4A1010;color:#EF9A9A;}
+body.dark .b-yes {background:#4A1010;color:#EF9A9A;}
+body.dark .b-no  {background:#0D3320;color:#A5D6A7;}
+
+/* ROW HIGHLIGHTS */
+tr.od-row td{background:#FFF4F3 !important;}
+body.dark tr.od-row td{background:#2A1515 !important;}
+
+/* SECTION TITLE */
+.section-title{font-size:1rem;font-weight:700;margin:26px 0 13px;
+               border-left:4px solid var(--accent);padding-left:11px;color:var(--text);}
+
+/* FOOTER */
+footer{text-align:center;font-size:.72rem;color:var(--text3);margin-top:34px;
+       padding-top:16px;border-top:1px solid var(--border);}
+
+@media(max-width:700px){.charts-2,.charts-3{grid-template-columns:1fr;}}
+
+.header{background:#1B3A6B;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;border:1.5px solid var(--accent);color:var(--accent);background:transparent;transition:background .2s,color .2s;margin:12px 0 8px 16px;}
+.back-btn:hover{background:var(--accent);color:#fff;}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Inicio</a>
+<button class="theme-toggle" onclick="toggleTheme()">
+  <span class="icon" id="themeIcon">🌙</span>
+  <span id="themeLabel">Modo Oscuro</span>
+</button>
+<div class="header">
+  <h1>Dashboard Estratégico — Todas las Células</h1>
+  <div class="meta">Generado por: Francisco Linares &nbsp;|&nbsp; 3/29/2026 23:21 &nbsp;|&nbsp; Soluciones y Servicios Tecnológicos</div>
+</div>
+<div class="container">
+
+<div class="kpi-row"><div class="kpi" style="border-color:#1B3A6B"><div class="val" style="color:#1B3A6B">52</div><div class="lbl">Tickets Totales</div></div>
+<div class="kpi" style="border-color:#2E86DE"><div class="val" style="color:#2E86DE">20</div><div class="lbl">Clientes</div></div>
+<div class="kpi" style="border-color:#2E86DE"><div class="val" style="color:#2E86DE">22</div><div class="lbl">Abiertos</div></div>
+<div class="kpi" style="border-color:#F5A623"><div class="val" style="color:#F5A623">25</div><div class="lbl">Esp. Cliente</div></div>
+<div class="kpi" style="border-color:#E74C3C"><div class="val" style="color:#E74C3C">5</div><div class="lbl">Escalados</div></div>
+<div class="kpi" style="border-color:#E74C3C"><div class="val" style="color:#E74C3C">5</div><div class="lbl">Vencidos</div></div>
+<div class="kpi" style="border-color:#27AE60"><div class="val" style="color:#27AE60">90%</div><div class="lbl">SLA Cumplido</div></div>
+</div>
+
+<div class="section-title">Distribución por Célula</div>
+<div class="charts-row" style="grid-template-columns:1fr">
+  <div class="card"><h3>Tickets por Célula y Estado</h3><div class="chart-wrap-tall"><canvas id="ce_stk"></canvas></div></div>
+</div>
+
+<div class="section-title">Clasificación Global y Vencimientos</div>
+<div class="charts-row charts-2">
+  <div class="card"><h3>Clasificación de Tickets</h3><div class="chart-wrap"><canvas id="ce_cls"></canvas></div></div>
+  <div class="card"><h3>A tiempo vs Vencidos por Célula</h3><div class="chart-wrap"><canvas id="ce_od"></canvas></div></div>
+</div>
+
+<div class="section-title">Vista de Clientes — Top 12 por Volumen</div>
+<div class="charts-row" style="grid-template-columns:1fr">
+  <div class="card"><h3>Top Clientes &nbsp;<span style="font-size:.75rem;font-weight:400;color:var(--text3)">(color = célula dominante)</span></h3>
+    <div class="chart-wrap-tall"><canvas id="ce_top"></canvas></div></div>
+</div>
+
+<div class="section-title">Resumen por Célula</div>
+<div class="card"><div class="table-wrap">
+<table><thead><tr><th>Célula</th><th class="t-center">Total</th><th class="t-center">Abiertos</th><th class="t-center">Esp.Cliente</th><th class="t-center">Escalados</th><th class="t-center">Vencidos</th><th class="t-center">% Venc.</th></tr></thead>
+<tbody><tr><td><b style="color:#2E6FD4">Alpha</b></td><td class="t-center"><b>17</b></td><td class="t-center">10</td><td class="t-center">5</td><td class="t-center">2</td><td class="t-center" style="color:#E74C3C"><b>4</b></td><td class="t-center"><b>24%</b></td></tr><tr><td><b style="color:#27AE60">Beta</b></td><td class="t-center"><b>17</b></td><td class="t-center">8</td><td class="t-center">8</td><td class="t-center">1</td><td class="t-center" style="color:#27AE60"><b>0</b></td><td class="t-center"><b>0%</b></td></tr><tr><td><b style="color:#D4881A">Delta</b></td><td class="t-center"><b>4</b></td><td class="t-center">1</td><td class="t-center">2</td><td class="t-center">1</td><td class="t-center" style="color:#27AE60"><b>0</b></td><td class="t-center"><b>0%</b></td></tr><tr><td><b style="color:#7D3C98">Epsilon</b></td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">1</td><td class="t-center">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td><td class="t-center"><b>0%</b></td></tr><tr><td><b style="color:#C0392B">Gamma</b></td><td class="t-center"><b>13</b></td><td class="t-center">3</td><td class="t-center">9</td><td class="t-center">1</td><td class="t-center" style="color:#E74C3C"><b>1</b></td><td class="t-center"><b>8%</b></td></tr><tr style="font-weight:700"><td>TOTAL</td><td class="t-center">52</td><td class="t-center">22</td><td class="t-center">25</td><td class="t-center">5</td><td class="t-center" style="color:#E74C3C">5</td><td class="t-center">10%</td></tr></tbody></table></div></div>
+
+<div class="section-title">Vista Detallada de Clientes</div>
+<div class="card"><div class="table-wrap">
+<table><thead><tr><th>Cliente</th><th class="t-center">Célula(s)</th><th class="t-center">Total</th><th class="t-center">Abiertos</th><th class="t-center">Esp.Cliente</th><th class="t-center">Escalados</th><th class="t-center">Vencidos</th></tr></thead>
+<tbody><tr class="od-row"><td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR</td><td class="t-center">Alpha</td><td class="t-center"><b>9</b></td><td class="t-center">7</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#E74C3C"><b>2</b></td></tr>
+<tr><td title="BEEPAY INC">BEEPAY INC</td><td class="t-center">Beta</td><td class="t-center"><b>5</b></td><td class="t-center">3</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="MINISTERIO DE ECONOMIA Y FINANZAS">MINISTERIO DE ECONOMIA Y FINANZAS</td><td class="t-center">Beta</td><td class="t-center"><b>5</b></td><td class="t-center">2</td><td class="t-center">3</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="THE PANAMA CLINIC MEDICAL, S.A.">THE PANAMA CLINIC MEDICAL, S.A.</td><td class="t-center">Beta</td><td class="t-center"><b>4</b></td><td class="t-center">2</td><td class="t-center">1</td><td class="t-center" style="color:#E74C3C">1</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr class="od-row"><td title="EMPRESA DE TRANSMISION ELECTRICA, S.A.">EMPRESA DE TRANSMISION ELECTRICA, S.A.</td><td class="t-center">Gamma</td><td class="t-center"><b>3</b></td><td class="t-center">2</td><td class="t-center">0</td><td class="t-center" style="color:#E74C3C">1</td><td class="t-center" style="color:#E74C3C"><b>1</b></td></tr>
+<tr class="od-row"><td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td><td class="t-center">Alpha</td><td class="t-center"><b>3</b></td><td class="t-center">2</td><td class="t-center">0</td><td class="t-center" style="color:#E74C3C">1</td><td class="t-center" style="color:#E74C3C"><b>1</b></td></tr>
+<tr><td title="J. CAIN & CO.">J. CAIN & CO.</td><td class="t-center">Gamma</td><td class="t-center"><b>3</b></td><td class="t-center">0</td><td class="t-center">3</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr class="od-row"><td title="QUIJANO & ASOCIADOS">QUIJANO & ASOCIADOS</td><td class="t-center">Alpha</td><td class="t-center"><b>3</b></td><td class="t-center">1</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#E74C3C"><b>1</b></td></tr>
+<tr><td title="BANCO LATINOAMERICANO DE COMERCIO EXTERIOR, S.A.">BANCO LATINOAMERICANO DE COMERCIO EXTERIOR, S…</td><td class="t-center">Gamma</td><td class="t-center"><b>2</b></td><td class="t-center">0</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="BANISI, S.A.">BANISI, S.A.</td><td class="t-center">Gamma</td><td class="t-center"><b>2</b></td><td class="t-center">0</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="CORPORACION MEDCOM PANAMA, S.A.">CORPORACION MEDCOM PANAMA, S.A.</td><td class="t-center">Gamma</td><td class="t-center"><b>2</b></td><td class="t-center">0</td><td class="t-center">2</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="IMPLOSA">IMPLOSA</td><td class="t-center">Beta</td><td class="t-center"><b>2</b></td><td class="t-center">1</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="LUMA PR">LUMA PR</td><td class="t-center">Delta</td><td class="t-center"><b>2</b></td><td class="t-center">1</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="BANCO GENERAL">BANCO GENERAL</td><td class="t-center">Beta</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="BANCO LA HIPOTECARIA">BANCO LA HIPOTECARIA</td><td class="t-center">Alpha</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">0</td><td class="t-center" style="color:#E74C3C">1</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="CLINICA HOSPITAL SAN FERNANDO">CLINICA HOSPITAL SAN FERNANDO</td><td class="t-center">Gamma</td><td class="t-center"><b>1</b></td><td class="t-center">1</td><td class="t-center">0</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="COOPERATIVA DE AHORRO Y CREDITO DE VEGA ALTA (VEGACOOP)">COOPERATIVA DE AHORRO Y CREDITO DE VEGA ALTA …</td><td class="t-center">Alpha</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN">ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN</td><td class="t-center">Delta</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">0</td><td class="t-center" style="color:#E74C3C">1</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="TECNASA (TECNOLOGÍA APLICADA, S.A.)">TECNASA (TECNOLOGÍA APLICADA, S.A.)</td><td class="t-center">Delta</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr>
+<tr><td title="TELERED S.A.">TELERED S.A.</td><td class="t-center">Epsilon</td><td class="t-center"><b>1</b></td><td class="t-center">0</td><td class="t-center">1</td><td class="t-center" style="color:inherit">0</td><td class="t-center" style="color:#27AE60"><b>0</b></td></tr></tbody></table></div></div>
+
+<footer>Soluciones y Servicios Tecnológicos &nbsp;|&nbsp; Dashboard Estratégico &nbsp;|&nbsp; 3/29/2026 23:21</footer>
+</div>
+<script>
+
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  if(saved==='dark') document.body.classList.add('dark');
+  function setIcon(){
+    const dark = document.body.classList.contains('dark');
+    document.getElementById('themeIcon').textContent = dark ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = dark ? 'Modo Claro' : 'Modo Oscuro';
+  }
+  window.toggleTheme = function(){
+    document.body.classList.toggle('dark');
+    const dark = document.body.classList.contains('dark');
+    localStorage.setItem('theme', dark?'dark':'light');
+    setIcon();
+    updateChartThemes();
+  };
+  document.addEventListener('DOMContentLoaded', setIcon);
+})();
+
+// Chart.js global theme helpers
+Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+Chart.defaults.font.size = 12;
+
+function getThemeColors() {
+  const dark = document.body.classList.contains('dark');
+  return {
+    text:    dark ? '#B0B8D0' : '#555566',
+    grid:    dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)',
+    bg:      dark ? '#1A1D27' : '#FFFFFF',
+    tooltip: dark ? '#22263A' : '#FFFFFF',
+    ttext:   dark ? '#E8EAF2' : '#1A1A2E',
+  };
+}
+
+var allCharts = [];
+
+function makeChartDefaults(extra) {
+  const tc = getThemeColors();
+  return Object.assign({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: tc.text, boxWidth: 13, font: {size:11} }
+      },
+      tooltip: {
+        backgroundColor: tc.tooltip,
+        titleColor: tc.ttext,
+        bodyColor: tc.text,
+        borderColor: 'rgba(128,128,128,0.3)',
+        borderWidth: 1,
+        padding: 10,
+      }
+    },
+    scales: {}
+  }, extra || {});
+}
+
+function applyScales(opts, axes) {
+  const tc = getThemeColors();
+  axes.forEach(function(axis) {
+    var cfg = {
+      ticks: { color: tc.text, font:{size:11} },
+      grid:  { color: tc.grid  }
+    };
+    if(axis.noGrid) cfg.grid = {display:false};
+    if(axis.stacked) cfg.stacked = true;
+    opts.scales[axis.id] = cfg;
+  });
+  return opts;
+}
+
+function updateChartThemes() {
+  const tc = getThemeColors();
+  allCharts.forEach(function(ch) {
+    if(!ch) return;
+    // Update legend
+    if(ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels)
+      ch.options.plugins.legend.labels.color = tc.text;
+    // Update tooltip
+    if(ch.options.plugins && ch.options.plugins.tooltip) {
+      ch.options.plugins.tooltip.backgroundColor = tc.tooltip;
+      ch.options.plugins.tooltip.titleColor = tc.ttext;
+      ch.options.plugins.tooltip.bodyColor = tc.text;
+    }
+    // Update scales
+    Object.values(ch.options.scales || {}).forEach(function(scale) {
+      if(scale.ticks) scale.ticks.color = tc.text;
+      if(scale.grid && scale.grid.display !== false) scale.grid.color = tc.grid;
+    });
+    ch.update();
+  });
+}
+
+
+
+allCharts.push(new Chart(document.getElementById('ce_stk'), {
+  type: 'bar',
+  data: { labels: ["Alpha", "Beta", "Delta", "Epsilon", "Gamma"], datasets: [{"label": "Abierto", "data": [10, 8, 1, 0, 3], "backgroundColor": "#2E86DEBB", "borderColor": "#2E86DE", "borderWidth": 1, "borderRadius": 3}, {"label": "Esp.Cliente", "data": [5, 8, 2, 1, 9], "backgroundColor": "#F5A623BB", "borderColor": "#F5A623", "borderWidth": 1, "borderRadius": 3}, {"label": "Escalado", "data": [2, 1, 1, 0, 1], "backgroundColor": "#E74C3CBB", "borderColor": "#E74C3C", "borderWidth": 1, "borderRadius": 3}] },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{color:tc.text,font:{size:11},boxWidth:13} },
+        tooltip: {backgroundColor:tc.tooltip,titleColor:tc.ttext,bodyColor:tc.text,borderColor:'rgba(128,128,128,.3)',borderWidth:1,padding:10}
+      },
+      scales: {
+        x: { stacked:true, grid:{color:tc.grid}, ticks:{color:tc.text,font:{size:11}} },
+        y: { stacked:true, grid:{display:false}, ticks:{color:tc.text,font:{size:11}} }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('ce_cls'), {
+  type: 'doughnut',
+  data: {
+    labels: ["Incidents", "Service Requests", "Monitoring and Events", "Recommendations", "Change Requests", "-"],
+    datasets: [{
+      data: [4, 27, 3, 6, 2, 10],
+      backgroundColor: ["#E74C3C", "#2E86DE", "#F5A623", "#9B59B6", "#27AE60", "#aaa"],
+      borderWidth: 3,
+      borderColor: getThemeColors().bg,
+      hoverOffset: 8
+    }]
+  },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: tc.text, boxWidth: 13, font:{size:11}, padding:12 }
+        },
+        tooltip: {
+          backgroundColor: tc.tooltip, titleColor: tc.ttext, bodyColor: tc.text,
+          borderColor:'rgba(128,128,128,.3)', borderWidth:1, padding:10,
+          callbacks: {
+            label: function(c) {
+              var total = c.dataset.data.reduce(function(a,b){return a+b;}, 0);
+              return ' ' + c.label + ': ' + c.raw + '  (' + Math.round(c.parsed/total*100) + '%)';
+            }
+          }
+        }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('ce_od'), {
+  type: 'bar',
+  data: { labels: ["Alpha", "Beta", "Delta", "Epsilon", "Gamma"], datasets: [{"label": "A tiempo", "data": [13, 17, 4, 1, 12], "backgroundColor": "#27AE60BB", "borderColor": "#27AE60", "borderWidth": 1, "borderRadius": 4}, {"label": "Vencidos", "data": [4, 0, 0, 0, 1], "backgroundColor": "#E74C3CBB", "borderColor": "#E74C3C", "borderWidth": 1, "borderRadius": 4}] },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{color:tc.text,font:{size:11},boxWidth:13} },
+        tooltip: {backgroundColor:tc.tooltip,titleColor:tc.ttext,bodyColor:tc.text,borderColor:'rgba(128,128,128,.3)',borderWidth:1,padding:10}
+      },
+      scales: {
+        x: { stacked:true, grid:{display:false}, ticks:{color:tc.text,font:{size:11},maxRotation:30} },
+        y: { stacked:true, grid:{color:tc.grid}, ticks:{color:tc.text,font:{size:11}} }
+      }
+    };
+  })()
+}));
+
+allCharts.push(new Chart(document.getElementById('ce_top'), {
+  type: 'bar',
+  data: { labels: ["ASSA COMPA\u00d1IA DE SEGUROS, S.A.\u2026", "BEEPAY INC", "MINISTERIO DE ECONOMIA Y FINAN\u2026", "THE PANAMA CLINIC MEDICAL, S.A\u2026", "EMPRESA DE TRANSMISION ELECTRI\u2026", "FARMACIAS ARROCHA", "J. CAIN & CO.", "QUIJANO & ASOCIADOS", "BANCO LATINOAMERICANO DE COMER\u2026", "BANISI, S.A.", "CORPORACION MEDCOM PANAMA, S.A\u2026", "IMPLOSA"], datasets: [{"label": "Tickets", "data": [9, 5, 5, 4, 3, 3, 3, 3, 2, 2, 2, 2], "backgroundColor": ["#2E6FD4", "#27AE60", "#27AE60", "#27AE60", "#C0392B", "#2E6FD4", "#C0392B", "#2E6FD4", "#C0392B", "#C0392B", "#C0392B", "#27AE60"], "borderColor": "rgba(0,0,0,0.1)", "borderWidth": 1, "borderRadius": 4}] },
+  options: (function(){
+    var tc = getThemeColors();
+    return {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'top', labels:{color:tc.text,font:{size:11},boxWidth:13} },
+        tooltip: {backgroundColor:tc.tooltip,titleColor:tc.ttext,bodyColor:tc.text,borderColor:'rgba(128,128,128,.3)',borderWidth:1,padding:10}
+      },
+      scales: {
+        x: { stacked:false, grid:{display:false}, ticks:{color:tc.text,font:{size:11},maxRotation:30} },
+        y: { stacked:false, grid:{color:tc.grid}, ticks:{color:tc.text,font:{size:11}} }
+      }
+    };
+  })()
+}));
+
+</script>
+</body>
+</html>

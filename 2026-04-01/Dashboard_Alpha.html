@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Célula Alpha — 2026-04-01</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #F4F6F9; color: #2C3E50; }
+  .header { background: #1B3A6B; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 1.6em; }
+  .header .meta { font-size: 0.88em; opacity: 0.85; }
+  .nav { background: #fff; padding: 10px 32px; border-bottom: 2px solid #E0E6EF; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-link { padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 0.9em; font-weight: 600;
+    background: #EEF2F7; color: #2C3E50; transition: all 0.2s; border: 2px solid transparent; }
+  .nav-link:hover { background: #E8EEF8; border-color: #1B3A6B; }
+  .nav-link.active { background: #1B3A6B; color: #fff; }
+  .content { padding: 24px 32px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-top: 4px solid #1B3A6B; }
+  .kpi.overdue { border-top-color: #E74C3C; }
+  .kpi.escalated { border-top-color: #E74C3C; }
+  .kpi.waiting { border-top-color: #F5A623; }
+  .kpi.open { border-top-color: #2E86DE; }
+  .kpi-value { font-size: 2.4em; font-weight: 700; color: #1B3A6B; }
+  .kpi.overdue .kpi-value { color: #E74C3C; }
+  .kpi.escalated .kpi-value { color: #E74C3C; }
+  .kpi.waiting .kpi-value { color: #F5A623; }
+  .kpi.open .kpi-value { color: #2E86DE; }
+  .kpi-label { font-size: 0.85em; color: #7F8C8D; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .charts-row-wide { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .chart-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .chart-card h3 { font-size: 1em; color: #1B3A6B; margin-bottom: 16px; font-weight: 700; }
+  .chart-wrap { position: relative; height: 240px; }
+  .table-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
+  .table-card h3 { font-size: 1em; color: #1B3A6B; margin-bottom: 12px; font-weight: 700; }
+  .search-box { width: 100%; max-width: 400px; padding: 8px 14px; border: 1.5px solid #D0D7E2; border-radius: 8px; font-size: 0.95em; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+  th { background: #1B3A6B; color: #fff; padding: 10px 8px; text-align: left; position: sticky; top: 0; }
+  td { padding: 8px; border-bottom: 1px solid #EEF2F7; vertical-align: middle; }
+  tr:hover { background: #E8EEF8; }
+  td a { color: #1B3A6B; font-weight: 600; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .status-open { color: #2E86DE; font-weight: 600; }
+  .status-waiting { color: #E67E22; font-weight: 600; }
+  .status-escalated { color: #E74C3C; font-weight: 700; }
+  .badge { padding: 2px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 700; }
+  .badge-overdue { background: #FDECEA; color: #C0392B; }
+  .badge-ok { background: #EAF7EC; color: #27AE60; }
+  .footer { text-align: center; padding: 16px; color: #95A5A6; font-size: 0.82em; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>📊 Dashboard Célula Alpha</h1>
+    <div class="meta">Reporte generado: 3/30/2026 14:07 · Solusoft — Soluciones y Servicios Tecnológicos</div>
+  </div>
+  <div style="font-size:2em;">🔵</div>
+</div>
+<div class="nav">
+  <a href="Dashboard_Estrategico.html" class="nav-link">🌐 Global</a><a href="Dashboard_Alpha.html" class="nav-link active">Alpha</a><a href="Dashboard_Beta.html" class="nav-link">Beta</a><a href="Dashboard_Delta.html" class="nav-link">Delta</a><a href="Dashboard_Epsilon.html" class="nav-link">Epsilon</a><a href="Dashboard_Gamma.html" class="nav-link">Gamma</a>
+</div>
+<div class="content">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-value">25</div><div class="kpi-label">Total Tickets</div></div>
+    <div class="kpi open"><div class="kpi-value">14</div><div class="kpi-label">Abiertos</div></div>
+    <div class="kpi waiting"><div class="kpi-value">9</div><div class="kpi-label">Esp. Cliente</div></div>
+    <div class="kpi escalated"><div class="kpi-value">2</div><div class="kpi-label">Escalados</div></div>
+    <div class="kpi overdue"><div class="kpi-value">5</div><div class="kpi-label">Vencidos</div></div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>🍩 Distribución por Clasificación</h3>
+      <div class="chart-wrap"><canvas id="classChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>🍩 Distribución por Estado</h3>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row-wide">
+    <div class="chart-card">
+      <h3>📊 Tickets por Agente</h3>
+      <div class="chart-wrap"><canvas id="ownerChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📊 Tickets por Cliente (Top 10)</h3>
+      <div class="chart-wrap"><canvas id="accountChart"></canvas></div>
+    </div>
+  </div>
+  <div class="table-card">
+    <h3>📋 Todos los Tickets</h3>
+    <input class="search-box" type="text" id="searchBox" placeholder="🔍 Buscar por ID, cliente, asunto, agente..." onkeyup="filterTable()">
+    <div style="overflow-x:auto;">
+    <table id="ticketTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Tipo</th><th>Estado</th><th>Vence</th><th>OD</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/24106" target="_blank">#24106</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] Re: DMP ASSACR COSTA RICA">[ASSA] Re: DMP ASSACR COSTA RICA</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#E74C3C;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Incidents</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>9/2/2025 15:00</td>
+            <td><span class="badge badge-overdue">SÍ</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/25710" target="_blank">#25710</a></td>
+            <td title="QUIJANO & ASOCIADOS">QUIJANO & ASOCIADOS</td>
+            <td title="[Q&A] Minor updates disponibles para RDS y sistema operativo">[Q&A] Minor updates disponibles para RDS y si...</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#9B59B6;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26198" target="_blank">#26198</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="Incidencia Respaldo RMAN archive ASSAGT">Incidencia Respaldo RMAN archive ASSAGT</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#E74C3C;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Incidents</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26220" target="_blank">#26220</a></td>
+            <td title="PETROMOTORS, S.A.">PETROMOTORS, S.A.</td>
+            <td title="[PetroMotors] Upgrade de versión de  RDS  a versión 8.4.8">[PetroMotors] Upgrade de versión de  RDS  a v...</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#9B59B6;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26312" target="_blank">#26312</a></td>
+            <td title="COOPERATIVA DE AHORRO Y CREDITO DE VEGA ALTA (VEGACOOP)">COOPERATIVA DE AHORRO Y CREDIT...</td>
+            <td title="[VEGACOOP] - Instalación de nuevo ambiente - FitBank3">[VEGACOOP] - Instalación de nuevo ambiente - ...</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#27AE60;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Change Requests</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26403" target="_blank">#26403</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="Monitoreo jvm colas de reporte 185">Monitoreo jvm colas de reporte 185</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26419" target="_blank">#26419</a></td>
+            <td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td>
+            <td title="RV: Requerimientos Técnicos – Migración Servidor Arrocha Conciliación">RV: Requerimientos Técnicos – Migración Servi...</td>
+            <td>Joel Parada</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/27/2026 8:10</td>
+            <td><span class="badge badge-overdue">SÍ</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26429" target="_blank">#26429</a></td>
+            <td title="QUIJANO & ASOCIADOS">QUIJANO & ASOCIADOS</td>
+            <td title="[Q&A] Dar acceso a a la subnet de AWS 172.31.0.0/16 los siguientes rango interno de QyA y la IP Publica de CW de QyA">[Q&A] Dar acceso a a la subnet de AWS 172.31....</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26464" target="_blank">#26464</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] Esquema de Respaldo de DESARROLLO/TEST Base de Datos">[ASSA] Esquema de Respaldo de DESARROLLO/TEST...</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#9B59B6;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>5/26/2026 10:44</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26512" target="_blank">#26512</a></td>
+            <td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td>
+            <td title="RE: [GBM Cloud Defender][Attack Path] CRÍTICA - Reporte de ruta de ataque identificado: Internet exposed AWS EC2 instance with high severity vulnerabilities allows lateral movement to AWS S3 bucket">RE: [GBM Cloud Defender][Attack Path] CRÍTICA...</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-escalated">Escalated</span></td>
+            <td>3/31/2026 12:26</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26526" target="_blank">#26526</a></td>
+            <td title="QUIJANO & ASOCIADOS">QUIJANO & ASOCIADOS</td>
+            <td title="[Q&A] Mejora de script de Sincronización de Archivos S3">[Q&A] Mejora de script de Sincronización de A...</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/27/2026 10:29</td>
+            <td><span class="badge badge-overdue">SÍ</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26555" target="_blank">#26555</a></td>
+            <td title="BANCO LA HIPOTECARIA">BANCO LA HIPOTECARIA</td>
+            <td title="Recomendación de optimización de rendimiento – Máquinas Virtuales en Azure">Recomendación de optimización de rendimiento ...</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#9B59B6;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+            <td><span class="status-escalated">Escalated</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26561" target="_blank">#26561</a></td>
+            <td title="FARMACIAS ARROCHA">FARMACIAS ARROCHA</td>
+            <td title="Servicios del APP">Servicios del APP</td>
+            <td>Joel Parada</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/30/2026 13:39</td>
+            <td><span class="badge badge-overdue">SÍ</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26564" target="_blank">#26564</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] Revisar la retención de la Auditoria en BD">[ASSA] Revisar la retención de la Auditoria e...</td>
+            <td>Enrique Cumberbatch Arthur</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/27/2026 14:54</td>
+            <td><span class="badge badge-overdue">SÍ</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26565" target="_blank">#26565</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="Monitoreo backup de rman bases de datos de produccion">Monitoreo backup de rman bases de datos de pr...</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>4/10/2026 13:59</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26566" target="_blank">#26566</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] - Análisis de políticas de retención de auditorías en las bases de datos">[ASSA] - Análisis de políticas de retención d...</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26568" target="_blank">#26568</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] - Solicitud de almacenamiento para DGDATA">[ASSA] - Solicitud de almacenamiento para DGD...</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#27AE60;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Change Requests</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26573" target="_blank">#26573</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="Inconvenientes con Respaldo FULL RMAN - ASSAGT">Inconvenientes con Respaldo FULL RMAN - ASSAG...</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/31/2026 16:12</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26574" target="_blank">#26574</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="Inconvenientes con Respaldo FULL RMAN - PRODASSA">Inconvenientes con Respaldo FULL RMAN - PRODA...</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/31/2026 16:33</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26577" target="_blank">#26577</a></td>
+            <td title="ASSA COMPAÑIA DE SEGUROS, S.A. EL SALVADOR">ASSA COMPAÑIA DE SEGUROS, S.A....</td>
+            <td title="[ASSA] - Reporte de Fallo de Backups en ASSACR y TESTCR">[ASSA] - Reporte de Fallo de Backups en ASSAC...</td>
+            <td>Eyvar Garcia</td>
+            <td><span style="background:#E74C3C;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Incidents</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26581" target="_blank">#26581</a></td>
+            <td title="CONTRALORIA GENERAL DE LA REPUBLICA.">CONTRALORIA GENERAL DE LA REPU...</td>
+            <td title="Visita semanal INEC 27-03-2026">Visita semanal INEC 27-03-2026</td>
+            <td>Joel Parada</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>3/30/2026 16:30</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26582" target="_blank">#26582</a></td>
+            <td title="PETROMOTORS, S.A.">PETROMOTORS, S.A.</td>
+            <td title="RE: Rotacion de credenciales usuarios IAM AWS">RE: Rotacion de credenciales usuarios IAM AWS</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#9B59B6;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26583" target="_blank">#26583</a></td>
+            <td title="PETROMOTORS, S.A.">PETROMOTORS, S.A.</td>
+            <td title="Renovacion de certificados SSL Jetour">Renovacion de certificados SSL Jetour</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26584" target="_blank">#26584</a></td>
+            <td title="PETROMOTORS, S.A.">PETROMOTORS, S.A.</td>
+            <td title="Renovacion certificados Soueast">Renovacion certificados Soueast</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-waiting">Waiting On Customer</span></td>
+            <td>—</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26585" target="_blank">#26585</a></td>
+            <td title="BANCO LA HIPOTECARIA">BANCO LA HIPOTECARIA</td>
+            <td title="[BLH]  informe mensual de monitoreo AZURE">[BLH]  informe mensual de monitoreo AZURE</td>
+            <td>Bryan Cruz</td>
+            <td><span style="background:#F5A623;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Monitoring and Events</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>4/6/2026 16:19</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+<div class="footer">Dashboard Célula Alpha · Solusoft © 2026 · Generado automáticamente</div>
+<script>
+const ctxClass = document.getElementById('classChart').getContext('2d');
+new Chart(ctxClass, {
+  type: 'doughnut',
+  data: { labels: ["Incidents", "Monitoring and Events", "Recommendations", "Service Requests", "Change Requests"], datasets: [{ data: [3, 6, 5, 9, 2], backgroundColor: ["#E74C3C", "#F5A623", "#9B59B6", "#2E86DE", "#27AE60"], borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } } } }
+});
+const ctxStatus = document.getElementById('statusChart').getContext('2d');
+new Chart(ctxStatus, {
+  type: 'doughnut',
+  data: { labels: ["Open", "Waiting On Customer", "Escalated"], datasets: [{ data: [14, 9, 2], backgroundColor: ["#2E86DE", "#F5A623", "#E74C3C"], borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } } } }
+});
+const ctxOwner = document.getElementById('ownerChart').getContext('2d');
+new Chart(ctxOwner, {
+  type: 'bar',
+  data: { labels: ["Bryan Cruz", "Eyvar Garcia", "Enrique Cumberbatch Arthur", "Joel Parada"], datasets: [{ label: 'Tickets', data: [10, 6, 6, 3], backgroundColor: ["#1B3A6B", "#1B3A6B", "#1B3A6B", "#1B3A6B"], borderRadius: 6 }] },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+const ctxAccount = document.getElementById('accountChart').getContext('2d');
+new Chart(ctxAccount, {
+  type: 'bar',
+  data: { labels: ["ASSA COMPA\u00d1IA DE SEGUROS, S.A. EL SALVADOR", "PETROMOTORS, S.A.", "FARMACIAS ARROCHA", "QUIJANO & ASOCIADOS", "BANCO LA HIPOTECARIA", "CONTRALORIA GENERAL DE LA REPUBLICA.", "COOPERATIVA DE AHORRO Y CREDITO DE VEGA ALTA (VEGACOOP)"], datasets: [{ label: 'Tickets', data: [11, 4, 3, 3, 2, 1, 1], backgroundColor: ["#1B3A6B", "#1B3A6B", "#1B3A6B", "#1B3A6B", "#1B3A6B", "#1B3A6B", "#1B3A6B"], borderRadius: 6 }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { maxRotation: 45, font: { size: 10 } } } } }
+});
+function filterTable() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const rows = document.getElementById('ticketTable').getElementsByTagName('tr');
+  for (let i = 1; i < rows.length; i++) {
+    const text = rows[i].textContent.toLowerCase();
+    rows[i].style.display = text.includes(q) ? '' : 'none';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Estratégico — 2026-04-01</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #F0F2F5; color: #2C3E50; }
+  .header { background: linear-gradient(135deg, #1B3A6B 0%, #2E6DB4 100%); color: #fff; padding: 20px 36px; }
+  .header h1 { font-size: 1.8em; }
+  .header .meta { font-size: 0.85em; opacity: 0.85; margin-top: 4px; }
+  .nav { background: #fff; padding: 10px 36px; border-bottom: 2px solid #E0E6EF; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .nav-link { padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 0.9em; font-weight: 600;
+    background: #EEF2F7; color: #2C3E50; transition: all 0.2s; border: 2px solid transparent; }
+  .nav-link:hover, .nav-link.active { background: #1B3A6B; color: #fff; }
+  .content { padding: 24px 36px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: #fff; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .kpi.total { border-top: 4px solid #1B3A6B; }
+  .kpi.open { border-top: 4px solid #2E86DE; }
+  .kpi.waiting { border-top: 4px solid #F5A623; }
+  .kpi.escalated { border-top: 4px solid #E74C3C; }
+  .kpi.overdue { border-top: 4px solid #C0392B; }
+  .kpi-value { font-size: 2.6em; font-weight: 800; }
+  .kpi.total .kpi-value { color: #1B3A6B; }
+  .kpi.open .kpi-value { color: #2E86DE; }
+  .kpi.waiting .kpi-value { color: #E67E22; }
+  .kpi.escalated .kpi-value { color: #E74C3C; }
+  .kpi.overdue .kpi-value { color: #C0392B; }
+  .kpi-label { font-size: 0.82em; color: #7F8C8D; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-title { font-size: 1.15em; font-weight: 700; color: #1B3A6B; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 2px solid #E8EEF8; }
+  .cell-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .cell-card { background: #fff; border-radius: 12px; padding: 18px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-decoration: none; color: #2C3E50; transition: transform 0.2s, box-shadow 0.2s; border-top: 4px solid #1B3A6B; }
+  .cell-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.13); }
+  .cell-card-name { font-size: 1.1em; font-weight: 800; margin-bottom: 6px; }
+  .cell-card-total { font-size: 2em; font-weight: 800; color: #2C3E50; }
+  .cell-card-sub { font-size: 0.78em; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px; }
+  .chart-card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .chart-card h3 { font-size: 1em; color: #1B3A6B; margin-bottom: 14px; font-weight: 700; }
+  .chart-wrap { position: relative; height: 280px; }
+  .table-card { background: #fff; border-radius: 12px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
+  .table-card h3 { font-size: 1em; color: #1B3A6B; margin-bottom: 12px; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+  th { background: #1B3A6B; color: #fff; padding: 10px 8px; text-align: left; }
+  td { padding: 9px 8px; border-bottom: 1px solid #EEF2F7; vertical-align: middle; }
+  tr:hover { background: #F0F4FA; }
+  td a { color: #1B3A6B; font-weight: 600; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .footer { text-align: center; padding: 18px; color: #95A5A6; font-size: 0.82em; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌐 Dashboard Estratégico — Vista Global</h1>
+  <div class="meta">Reporte: 3/30/2026 14:07 · Solusoft — Soluciones y Servicios Tecnológicos · Todas las Células</div>
+</div>
+<div class="nav">
+  <a href="Dashboard_Estrategico.html" class="nav-link active">🌐 Global</a>
+  <a href="Dashboard_Alpha.html" class="nav-link">Alpha</a><a href="Dashboard_Beta.html" class="nav-link">Beta</a><a href="Dashboard_Delta.html" class="nav-link">Delta</a><a href="Dashboard_Epsilon.html" class="nav-link">Epsilon</a><a href="Dashboard_Gamma.html" class="nav-link">Gamma</a>
+</div>
+<div class="content">
+  <div class="kpi-row">
+    <div class="kpi total"><div class="kpi-value">60</div><div class="kpi-label">Total Tickets</div></div>
+    <div class="kpi open"><div class="kpi-value">29</div><div class="kpi-label">Abiertos</div></div>
+    <div class="kpi waiting"><div class="kpi-value">26</div><div class="kpi-label">Esp. Cliente</div></div>
+    <div class="kpi escalated"><div class="kpi-value">5</div><div class="kpi-label">Escalados</div></div>
+    <div class="kpi overdue"><div class="kpi-value">6</div><div class="kpi-label">Vencidos</div></div>
+  </div>
+
+  <p class="section-title">🔗 Accesos Directos por Célula</p>
+  <div class="cell-cards">
+    
+        <a href="Dashboard_Alpha.html" class="cell-card" style="border-top-color:#1B3A6B;">
+            <div class="cell-card-name" style="color:#1B3A6B;">Alpha</div>
+            <div class="cell-card-total">25</div>
+            <div class="cell-card-sub">
+                <span style="color:#2E86DE;">●14 Ab</span>
+                <span style="color:#E67E22;">●9 EC</span>
+                <span style="color:#E74C3C;">●2 Es</span>
+                <span style="color:#C0392B;font-weight:700;">⚠️5 OD</span>
+            </div>
+        </a>
+        <a href="Dashboard_Beta.html" class="cell-card" style="border-top-color:#1A6B3A;">
+            <div class="cell-card-name" style="color:#1A6B3A;">Beta</div>
+            <div class="cell-card-total">13</div>
+            <div class="cell-card-sub">
+                <span style="color:#2E86DE;">●6 Ab</span>
+                <span style="color:#E67E22;">●6 EC</span>
+                <span style="color:#E74C3C;">●1 Es</span>
+                
+            </div>
+        </a>
+        <a href="Dashboard_Delta.html" class="cell-card" style="border-top-color:#6B4A1A;">
+            <div class="cell-card-name" style="color:#6B4A1A;">Delta</div>
+            <div class="cell-card-total">7</div>
+            <div class="cell-card-sub">
+                <span style="color:#2E86DE;">●3 Ab</span>
+                <span style="color:#E67E22;">●3 EC</span>
+                <span style="color:#E74C3C;">●1 Es</span>
+                
+            </div>
+        </a>
+        <a href="Dashboard_Epsilon.html" class="cell-card" style="border-top-color:#3A1A6B;">
+            <div class="cell-card-name" style="color:#3A1A6B;">Epsilon</div>
+            <div class="cell-card-total">1</div>
+            <div class="cell-card-sub">
+                <span style="color:#2E86DE;">●1 Ab</span>
+                <span style="color:#E67E22;">●0 EC</span>
+                <span style="color:#E74C3C;">●0 Es</span>
+                
+            </div>
+        </a>
+        <a href="Dashboard_Gamma.html" class="cell-card" style="border-top-color:#6B1A3A;">
+            <div class="cell-card-name" style="color:#6B1A3A;">Gamma</div>
+            <div class="cell-card-total">14</div>
+            <div class="cell-card-sub">
+                <span style="color:#2E86DE;">●5 Ab</span>
+                <span style="color:#E67E22;">●8 EC</span>
+                <span style="color:#E74C3C;">●1 Es</span>
+                <span style="color:#C0392B;font-weight:700;">⚠️1 OD</span>
+            </div>
+        </a>
+  </div>
+
+  <p class="section-title">📊 Comparativa por Célula</p>
+  <div class="table-card" style="padding-top:8px;">
+    <table>
+      <thead><tr><th>Célula</th><th style="text-align:center;">Total</th><th style="text-align:center;">Abiertos</th><th style="text-align:center;">Esp. Cliente</th><th style="text-align:center;">Escalados</th><th style="text-align:center;">Vencidos</th></tr></thead>
+      <tbody>
+        <tr>
+            <td><a href="Dashboard_Alpha.html" style="color:#1B3A6B;font-weight:700;">🔗 Alpha</a></td>
+            <td style="text-align:center;font-weight:700;">25</td>
+            <td style="text-align:center;color:#2E86DE;font-weight:600;">14</td>
+            <td style="text-align:center;color:#E67E22;font-weight:600;">9</td>
+            <td style="text-align:center;color:#E74C3C;font-weight:700;">2</td>
+            <td style="text-align:center;color:#C0392B;font-weight:700;">5</td>
+        </tr>
+        <tr>
+            <td><a href="Dashboard_Beta.html" style="color:#1A6B3A;font-weight:700;">🔗 Beta</a></td>
+            <td style="text-align:center;font-weight:700;">13</td>
+            <td style="text-align:center;color:#2E86DE;font-weight:600;">6</td>
+            <td style="text-align:center;color:#E67E22;font-weight:600;">6</td>
+            <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
+            <td style="text-align:center;color:#C0392B;font-weight:700;">0</td>
+        </tr>
+        <tr>
+            <td><a href="Dashboard_Delta.html" style="color:#6B4A1A;font-weight:700;">🔗 Delta</a></td>
+            <td style="text-align:center;font-weight:700;">7</td>
+            <td style="text-align:center;color:#2E86DE;font-weight:600;">3</td>
+            <td style="text-align:center;color:#E67E22;font-weight:600;">3</td>
+            <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
+            <td style="text-align:center;color:#C0392B;font-weight:700;">0</td>
+        </tr>
+        <tr>
+            <td><a href="Dashboard_Epsilon.html" style="color:#3A1A6B;font-weight:700;">🔗 Epsilon</a></td>
+            <td style="text-align:center;font-weight:700;">1</td>
+            <td style="text-align:center;color:#2E86DE;font-weight:600;">1</td>
+            <td style="text-align:center;color:#E67E22;font-weight:600;">0</td>
+            <td style="text-align:center;color:#E74C3C;font-weight:700;">0</td>
+            <td style="text-align:center;color:#C0392B;font-weight:700;">0</td>
+        </tr>
+        <tr>
+            <td><a href="Dashboard_Gamma.html" style="color:#6B1A3A;font-weight:700;">🔗 Gamma</a></td>
+            <td style="text-align:center;font-weight:700;">14</td>
+            <td style="text-align:center;color:#2E86DE;font-weight:600;">5</td>
+            <td style="text-align:center;color:#E67E22;font-weight:600;">8</td>
+            <td style="text-align:center;color:#E74C3C;font-weight:700;">1</td>
+            <td style="text-align:center;color:#C0392B;font-weight:700;">1</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>📊 Estado por Célula (Apilado)</h3>
+      <div class="chart-wrap"><canvas id="stackedChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>🍩 Clasificación Global</h3>
+      <div class="chart-wrap"><canvas id="clsGlobalChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>⚠️ Tickets Vencidos (6)</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Célula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Clasificación</th><th>Vence</th></tr></thead>
+      <tbody>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/24106" target="_blank">#24106</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>ASSA COMPAÑIA DE SEGUROS, S.A. EL S...</td>
+                <td>[ASSA] Re: DMP ASSACR COSTA RICA</td>
+                <td>Eyvar Garcia</td>
+                <td><span style="background:#E74C3C;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Incidents</span></td>
+                <td>9/2/2025 15:00</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26564" target="_blank">#26564</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>ASSA COMPAÑIA DE SEGUROS, S.A. EL S...</td>
+                <td>[ASSA] Revisar la retención de la Audito...</td>
+                <td>Enrique Cumberbatch Arthur</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>3/27/2026 14:54</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/24555" target="_blank">#24555</a></td>
+                <td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Gamma</span></td>
+                <td>EMPRESA DE TRANSMISION ELECTRICA, S...</td>
+                <td>Eliminar documentacion al editar nota Sa...</td>
+                <td>Dalida Buitrago</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>11/21/2025 8:02</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26419" target="_blank">#26419</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>FARMACIAS ARROCHA</td>
+                <td>RV: Requerimientos Técnicos – Migración ...</td>
+                <td>Joel Parada</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>3/27/2026 8:10</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26561" target="_blank">#26561</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>FARMACIAS ARROCHA</td>
+                <td>Servicios del APP</td>
+                <td>Joel Parada</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>3/30/2026 13:39</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26526" target="_blank">#26526</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>QUIJANO & ASOCIADOS</td>
+                <td>[Q&A] Mejora de script de Sincronización...</td>
+                <td>Enrique Cumberbatch Arthur</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>3/27/2026 10:29</td>
+            </tr></tbody>
+    </table>
+  </div>
+  <div class="table-card">
+    <h3>🚨 Tickets Escalados (5)</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Célula</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Clasificación</th><th>Vence</th></tr></thead>
+      <tbody>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26555" target="_blank">#26555</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>BANCO LA HIPOTECARIA</td>
+                <td>Recomendación de optimización de rendimi...</td>
+                <td>Bryan Cruz</td>
+                <td><span style="background:#9B59B6;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Recommendations</span></td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/24555" target="_blank">#24555</a></td>
+                <td><span style="background:#6B1A3A;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Gamma</span></td>
+                <td>EMPRESA DE TRANSMISION ELECTRICA, S...</td>
+                <td>Eliminar documentacion al editar nota Sa...</td>
+                <td>Dalida Buitrago</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>11/21/2025 8:02</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26512" target="_blank">#26512</a></td>
+                <td><span style="background:#1B3A6B;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Alpha</span></td>
+                <td>FARMACIAS ARROCHA</td>
+                <td>RE: [GBM Cloud Defender][Attack Path] CR...</td>
+                <td>Bryan Cruz</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>3/31/2026 12:26</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26309" target="_blank">#26309</a></td>
+                <td><span style="background:#6B4A1A;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Delta</span></td>
+                <td>ICAZA, GONZÁLEZ, RUÍZ & ALEMÁN</td>
+                <td>Solicitud por parte del equipo de IT del...</td>
+                <td>Isaac Sandoval</td>
+                <td><span style="background:#95A5A6;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Sin clasificar</span></td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/24370" target="_blank">#24370</a></td>
+                <td><span style="background:#1A6B3A;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.82em;">Beta</span></td>
+                <td>THE PANAMA CLINIC MEDICAL, S.A.</td>
+                <td>Respaldo de Servidores Virtuales OVM</td>
+                <td>Jhonny Gutierrez</td>
+                <td><span style="background:#2E86DE;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+                <td>—</td>
+            </tr></tbody>
+    </table>
+  </div>
+</div>
+<div class="footer">Dashboard Estratégico · Solusoft © 2026 · Generado automáticamente</div>
+<script>
+const ctxStacked = document.getElementById('stackedChart').getContext('2d');
+new Chart(ctxStacked, {
+  type: 'bar',
+  data: {
+    labels: ["Alpha", "Beta", "Delta", "Epsilon", "Gamma"],
+    datasets: [
+      { label: 'Abiertos', data: [14, 6, 3, 1, 5], backgroundColor: '#2E86DE', borderRadius: 4 },
+      { label: 'Esp. Cliente', data: [9, 6, 3, 0, 8], backgroundColor: '#F5A623', borderRadius: 4 },
+      { label: 'Escalados', data: [2, 1, 1, 0, 1], backgroundColor: '#E74C3C', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom' } },
+    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }
+  }
+});
+const ctxClsGlobal = document.getElementById('clsGlobalChart').getContext('2d');
+new Chart(ctxClsGlobal, {
+  type: 'doughnut',
+  data: { labels: ["Incidents", "Monitoring and Events", "Recommendations", "Service Requests", "Change Requests", "Sin clasificar"], datasets: [{ data: [5, 6, 9, 30, 2, 8], backgroundColor: ["#E74C3C", "#F5A623", "#9B59B6", "#2E86DE", "#27AE60", "#95A5A6"], borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } } } }
+});
+</script>
+</body>
+</html>

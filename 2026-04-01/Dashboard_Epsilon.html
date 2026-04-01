@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Célula Epsilon — 2026-04-01</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #F4F6F9; color: #2C3E50; }
+  .header { background: #3A1A6B; color: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 1.6em; }
+  .header .meta { font-size: 0.88em; opacity: 0.85; }
+  .nav { background: #fff; padding: 10px 32px; border-bottom: 2px solid #E0E6EF; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-link { padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 0.9em; font-weight: 600;
+    background: #EEF2F7; color: #2C3E50; transition: all 0.2s; border: 2px solid transparent; }
+  .nav-link:hover { background: #EEE8F8; border-color: #3A1A6B; }
+  .nav-link.active { background: #3A1A6B; color: #fff; }
+  .content { padding: 24px 32px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-top: 4px solid #3A1A6B; }
+  .kpi.overdue { border-top-color: #E74C3C; }
+  .kpi.escalated { border-top-color: #E74C3C; }
+  .kpi.waiting { border-top-color: #F5A623; }
+  .kpi.open { border-top-color: #2E86DE; }
+  .kpi-value { font-size: 2.4em; font-weight: 700; color: #3A1A6B; }
+  .kpi.overdue .kpi-value { color: #E74C3C; }
+  .kpi.escalated .kpi-value { color: #E74C3C; }
+  .kpi.waiting .kpi-value { color: #F5A623; }
+  .kpi.open .kpi-value { color: #2E86DE; }
+  .kpi-label { font-size: 0.85em; color: #7F8C8D; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .charts-row-wide { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .chart-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .chart-card h3 { font-size: 1em; color: #3A1A6B; margin-bottom: 16px; font-weight: 700; }
+  .chart-wrap { position: relative; height: 240px; }
+  .table-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
+  .table-card h3 { font-size: 1em; color: #3A1A6B; margin-bottom: 12px; font-weight: 700; }
+  .search-box { width: 100%; max-width: 400px; padding: 8px 14px; border: 1.5px solid #D0D7E2; border-radius: 8px; font-size: 0.95em; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+  th { background: #3A1A6B; color: #fff; padding: 10px 8px; text-align: left; position: sticky; top: 0; }
+  td { padding: 8px; border-bottom: 1px solid #EEF2F7; vertical-align: middle; }
+  tr:hover { background: #EEE8F8; }
+  td a { color: #3A1A6B; font-weight: 600; text-decoration: none; }
+  td a:hover { text-decoration: underline; }
+  .status-open { color: #2E86DE; font-weight: 600; }
+  .status-waiting { color: #E67E22; font-weight: 600; }
+  .status-escalated { color: #E74C3C; font-weight: 700; }
+  .badge { padding: 2px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 700; }
+  .badge-overdue { background: #FDECEA; color: #C0392B; }
+  .badge-ok { background: #EAF7EC; color: #27AE60; }
+  .footer { text-align: center; padding: 16px; color: #95A5A6; font-size: 0.82em; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>📊 Dashboard Célula Epsilon</h1>
+    <div class="meta">Reporte generado: 3/30/2026 14:07 · Solusoft — Soluciones y Servicios Tecnológicos</div>
+  </div>
+  <div style="font-size:2em;">🟣</div>
+</div>
+<div class="nav">
+  <a href="Dashboard_Estrategico.html" class="nav-link">🌐 Global</a><a href="Dashboard_Alpha.html" class="nav-link">Alpha</a><a href="Dashboard_Beta.html" class="nav-link">Beta</a><a href="Dashboard_Delta.html" class="nav-link">Delta</a><a href="Dashboard_Epsilon.html" class="nav-link active">Epsilon</a><a href="Dashboard_Gamma.html" class="nav-link">Gamma</a>
+</div>
+<div class="content">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-value">1</div><div class="kpi-label">Total Tickets</div></div>
+    <div class="kpi open"><div class="kpi-value">1</div><div class="kpi-label">Abiertos</div></div>
+    <div class="kpi waiting"><div class="kpi-value">0</div><div class="kpi-label">Esp. Cliente</div></div>
+    <div class="kpi escalated"><div class="kpi-value">0</div><div class="kpi-label">Escalados</div></div>
+    <div class="kpi overdue"><div class="kpi-value">0</div><div class="kpi-label">Vencidos</div></div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>🍩 Distribución por Clasificación</h3>
+      <div class="chart-wrap"><canvas id="classChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>🍩 Distribución por Estado</h3>
+      <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row-wide">
+    <div class="chart-card">
+      <h3>📊 Tickets por Agente</h3>
+      <div class="chart-wrap"><canvas id="ownerChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📊 Tickets por Cliente (Top 10)</h3>
+      <div class="chart-wrap"><canvas id="accountChart"></canvas></div>
+    </div>
+  </div>
+  <div class="table-card">
+    <h3>📋 Todos los Tickets</h3>
+    <input class="search-box" type="text" id="searchBox" placeholder="🔍 Buscar por ID, cliente, asunto, agente..." onkeyup="filterTable()">
+    <div style="overflow-x:auto;">
+    <table id="ticketTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Cliente</th><th>Asunto</th><th>Agente</th><th>Tipo</th><th>Estado</th><th>Vence</th><th>OD</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+            <td><a href="https://solusoft.zoho.com/support/solusoft/ShowHomePage.do#Cases/dv/26575" target="_blank">#26575</a></td>
+            <td title="TELERED S.A.">TELERED S.A.</td>
+            <td title="Métricas KPI | Ambiente Productivo Telered">Métricas KPI | Ambiente Productivo Telered</td>
+            <td>Dalida Buitrago</td>
+            <td><span style="background:#2E86DE;color:#fff;padding:2px 7px;border-radius:4px;font-size:0.78em;">Service Requests</span></td>
+            <td><span class="status-open">Open</span></td>
+            <td>4/1/2026 8:46</td>
+            <td><span class="badge badge-ok">NO</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+<div class="footer">Dashboard Célula Epsilon · Solusoft © 2026 · Generado automáticamente</div>
+<script>
+const ctxClass = document.getElementById('classChart').getContext('2d');
+new Chart(ctxClass, {
+  type: 'doughnut',
+  data: { labels: ["Service Requests"], datasets: [{ data: [1], backgroundColor: ["#2E86DE"], borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } } } }
+});
+const ctxStatus = document.getElementById('statusChart').getContext('2d');
+new Chart(ctxStatus, {
+  type: 'doughnut',
+  data: { labels: ["Open"], datasets: [{ data: [1], backgroundColor: ["#2E86DE"], borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 14 } } } }
+});
+const ctxOwner = document.getElementById('ownerChart').getContext('2d');
+new Chart(ctxOwner, {
+  type: 'bar',
+  data: { labels: ["Dalida Buitrago"], datasets: [{ label: 'Tickets', data: [1], backgroundColor: ["#3A1A6B"], borderRadius: 6 }] },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+const ctxAccount = document.getElementById('accountChart').getContext('2d');
+new Chart(ctxAccount, {
+  type: 'bar',
+  data: { labels: ["TELERED S.A."], datasets: [{ label: 'Tickets', data: [1], backgroundColor: ["#3A1A6B"], borderRadius: 6 }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { maxRotation: 45, font: { size: 10 } } } } }
+});
+function filterTable() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const rows = document.getElementById('ticketTable').getElementsByTagName('tr');
+  for (let i = 1; i < rows.length; i++) {
+    const text = rows[i].textContent.toLowerCase();
+    rows[i].style.display = text.includes(q) ? '' : 'none';
+  }
+}
+</script>
+</body>
+</html>
